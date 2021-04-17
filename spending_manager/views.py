@@ -6,6 +6,14 @@ from flask_jwt_extended import create_access_token
 def hello_world():
     return render_template('index.html')
 
+@app.route('/login')
+def account_login():
+    return render_template('account_login.html')
+
+@app.route('/register')
+def account_register():
+    return render_template('account_register.html')
+
 
 @app.route('/api/v1/login', methods=['POST'])
 def login():
