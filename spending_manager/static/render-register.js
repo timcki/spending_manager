@@ -1,4 +1,4 @@
-class Account_Login extends React.Component {
+class Account_Register extends React.Component {
   render() {
     return (
         <div >
@@ -10,4 +10,4 @@ class Account_Login extends React.Component {
         );
   }
 }
-ReactDOM.render(<Account_Login/>, document.getElementById("register"));
+ReactDOM.render(<Account_Register/>, document.getElementById("register"));
