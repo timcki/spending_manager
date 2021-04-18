@@ -8,3 +8,5 @@ To launch the app, run this in the cli:
 ```bash
 pip install flask && flask run
 ```
+
+# Prosze tworzyc branche i PR bo sie pozabijamy
