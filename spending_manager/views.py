@@ -1,6 +1,8 @@
 from spending_manager import app
 from flask import render_template, jsonify, request
 from flask_jwt_extended import create_access_token
+import json
+
 
 @app.route('/')
 def hello_world():
@@ -16,9 +18,16 @@ def account_register():
 
 
 @app.route('/api/v1/login', methods=['POST'])
-def login():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
+def api_login():
+    print(request.data)
+    result = json.loads(str(request.get_data()).split("\'")[1])
+    print(result)
+    # username = request.json.get("username", None)
+    # password = request.json.get("password", None)
+    username = result['username']
+    password = result['password']
+    print(username)
+    print(password)
 
     access_token = create_access_token(identity="deadbeef")
     return jsonify({"token": access_token})

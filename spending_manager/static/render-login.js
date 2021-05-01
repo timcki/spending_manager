@@ -4,26 +4,27 @@ class Account_Login extends React.Component {
         this.state={
             username:null,
             password:null,
-            is_logged:null,
+            is_logged:false,
             store:null
         }
     }
 
     login(){
-        fetch('api',{//TODO wrzucic poprawne odniesienie do api
+        fetch('http://127.0.0.1:5000/api/v1/login/',{
             method:'POST',
             body:JSON.stringify(this.state)
         }).then((response)=>{
             response.json().then((result)=>{
                 console.warn("result",result);
-                localStorage.setItem('is_logged', JSON.stringify({
-                    login:true,
+                localStorage.setItem('logged', JSON.stringify({
+                    is_logged:true,
                     token:result.token
                 }))
-                this.setState({login:true})
+                this.setState({is_logged:true})
             })
         })
     }
+
 
     render() {
         return (
@@ -39,7 +40,7 @@ class Account_Login extends React.Component {
                             <input ref="password" type="password" style={inputStyle} onChange={(event)=>{this.setState({password:event.target.value})}}/>
                         </div>
                         <div>
-                          <button style={submitStyle} type="submit" onClick={this.login()}>Zaloguj</button>
+                          <button style={submitStyle} type="submit" onClick={()=>this.login()}>Zaloguj</button>
                         </div>
                   </form>
                 :<div>Zalogowano</div>
