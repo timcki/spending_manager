@@ -19,15 +19,14 @@ def account_register():
 
 @app.route('/api/v1/login', methods=['POST'])
 def api_login():
-    print(request.data)
     result = json.loads(str(request.get_data()).split("\'")[1])
-    print(result)
+    # print(result)
     # username = request.json.get("username", None)
     # password = request.json.get("password", None)
     username = result['username']
     password = result['password']
-    print(username)
-    print(password)
+    # print(username)
+    # print(password)
 
     access_token = create_access_token(identity="deadbeef")
     return jsonify({"token": access_token})

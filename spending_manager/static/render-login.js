@@ -9,8 +9,9 @@ class Account_Login extends React.Component {
         }
     }
 
-    login(){
-        fetch('http://127.0.0.1:5000/api/v1/login/',{
+    login(event){
+        event.preventDefault();
+        fetch('http://127.0.0.1:5000/api/v1/login',{
             method:'POST',
             body:JSON.stringify(this.state)
         }).then((response)=>{
@@ -30,7 +31,7 @@ class Account_Login extends React.Component {
         return (
             <div style={appStyle}>
                 {!this.state.is_logged?
-                    <form style={formStyle} >
+                    <form style={formStyle} onSubmit={(event)=>{this.login(event)}} >
                         <div>
                             <label style={labelStyle} >Nazwa użytkownika:</label>
                             <input ref="username" type="text" style={inputStyle} onChange={(event)=>{this.setState({username:event.target.value})}}/>
@@ -40,7 +41,7 @@ class Account_Login extends React.Component {
                             <input ref="password" type="password" style={inputStyle} onChange={(event)=>{this.setState({password:event.target.value})}}/>
                         </div>
                         <div>
-                          <button style={submitStyle} type="submit" onClick={()=>this.login()}>Zaloguj</button>
+                          <input style={submitStyle} type="submit" value="Zaloguj"/>
                         </div>
                   </form>
                 :<div>Zalogowano</div>
