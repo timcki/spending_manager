@@ -41,13 +41,11 @@ def api_login():
     return jsonify({})
 
 
-@app.route('/api/v1/registration', methods=['POST'])
+@app.route('/api/v1/registration', methods=['POST', 'OPTIONS'])
 def api_registration():
-    result = json.loads(str(request.get_data()).split("\'")[1])
-    print(result)
-
-    username = result['username']
-    password = result['password']
+    if request.is_json:
+        u = request.json.get("username", None)
+        p = request.json.get("password", None)
 
     # TODO wrzucic zapytanie do bazy, czy taki uzytkownik juz istnieje
     # TODO jezeli jest ok, to wrzucic do bazy

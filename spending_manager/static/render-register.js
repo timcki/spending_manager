@@ -15,8 +15,11 @@ class Account_Register extends React.Component {
             return;
         }
         fetch('http://127.0.0.1:5000/api/v1/registration',{
-            method:'POST',
-            body:JSON.stringify(this.state)
+            method: "POST",
+            mode: "cors",
+            credentials: "same-origin",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(this.state)
         }).then((response)=>{
             response.json().then((result)=>{
                 //TODO wyswietlic jakis komunikat
