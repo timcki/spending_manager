@@ -3,6 +3,16 @@ from flask import render_template, jsonify, request
 from flask_jwt_extended import create_access_token
 import json
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Headers', 'Cache-Control')
+    response.headers.add('Access-Control-Allow-Headers', 'X-Requested-With')
+    response.headers.add('Access-Control-Allow-Headers', 'Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+    return response
 
 @app.route('/')
 def hello_world():
@@ -19,19 +29,16 @@ def account_register():
     return render_template('account_register.html')
 
 
-@app.route('/api/v1/login', methods=['POST'])
+@app.route('/api/v1/login', methods=['POST', 'OPTIONS'])
 def api_login():
-    result = json.loads(str(request.get_data()).split("\'")[1])
-    # print(result)
-    # username = request.json.get("username", None)
-    # password = request.json.get("password", None)
-    username = result['username']
-    password = result['password']
-    # print(username)
-    # print(password)
+    if request.is_json:
+        u = request.json.get("username", None)
+        p = request.json.get("password", None)
 
-    access_token = create_access_token(identity="deadbeef")
-    return jsonify({"token": access_token})
+        access_token = create_access_token(identity=u)
+        return jsonify({"token": access_token})
+
+    return jsonify({})
 
 
 @app.route('/api/v1/registration', methods=['POST'])
@@ -76,6 +83,6 @@ def api_categories_get():
 
 
 @app.route('/api/v1/categories/create', methods=['POST'])
-def api_categories_get():
+def api_categories_create():
     # TODO
     return jsonify({"success": True})

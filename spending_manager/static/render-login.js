@@ -2,20 +2,24 @@ class Account_Login extends React.Component {
     constructor() {
         super();
         this.state={
-            username:null,
-            password:null,
-            is_logged:false,
-            store:null
+            username: null,
+            password: null,
+            is_logged: false,
+            store: null
         }
     }
 
     login(event){
         event.preventDefault();
-        fetch('http://127.0.0.1:5000/api/v1/login',{
-            method:'POST',
-            body:JSON.stringify(this.state)
-        }).then((response)=>{
-            response.json().then((result)=>{
+        console.log(JSON.stringify(this.state))
+        fetch('http://127.0.0.1:5000/api/v1/login', {
+            method: "POST",
+            mode: "cors",
+            credentials: "same-origin",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(this.state)
+        }).then(response => {
+            response.json().then( result => {
                 console.warn("result",result);
                 localStorage.setItem('logged', JSON.stringify({
                     is_logged:true,

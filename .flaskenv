@@ -1,0 +1,2 @@
+FLASK_APP=spending_manager
+FLASK_ENV=development
