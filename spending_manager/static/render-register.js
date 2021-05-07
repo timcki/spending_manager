@@ -22,7 +22,8 @@ class Account_Register extends React.Component {
             body: JSON.stringify(this.state)
         }).then((response)=>{
             response.json().then((result)=>{
-                //TODO wyswietlic jakis komunikat
+                alert(result.mssg);
+                //TODO zmienic komunikat przykladowo na przekierowanie uzytkownika do panelu logowania
             })
         })
     }

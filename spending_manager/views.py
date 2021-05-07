@@ -2,6 +2,11 @@ from spending_manager import app
 from flask import render_template, jsonify, request
 from flask_jwt_extended import create_access_token
 import json
+import spending_manager.database as smDB
+
+db = smDB.SpendingManagerDB()
+
+
 
 @app.after_request
 def add_cors_headers(response):
@@ -35,10 +40,13 @@ def api_login():
         u = request.json.get("username", None)
         p = request.json.get("password", None)
 
-        access_token = create_access_token(identity=u)
-        return jsonify({"token": access_token})
+        if db.get_user_login_data(u, p):
+            access_token = create_access_token(identity=u)
+            return jsonify({"token": access_token, "success": True})
+        else:
+            return jsonify({"success": False, "mssg": "Błędne dane logowania!"})
 
-    return jsonify({})
+    return jsonify({"success": False})
 
 
 @app.route('/api/v1/registration', methods=['POST', 'OPTIONS'])
@@ -46,13 +54,11 @@ def api_registration():
     if request.is_json:
         u = request.json.get("username", None)
         p = request.json.get("password", None)
-
-    # TODO wrzucic zapytanie do bazy, czy taki uzytkownik juz istnieje
-    # TODO jezeli jest ok, to wrzucic do bazy
-
-    ok = True
-
-    return jsonify({"success": ok})
+        if db.get_user(u) is not None:
+            return jsonify({"success": False, "mssg": "Użytkownik o podanym loginie już istnieje!"})
+        else:
+            db.insert_user(u, p)
+            return jsonify({"success": True, "mssg": "Pomyślnie dodano nowego użytkownika!"})
 
 
 @app.route('/api/v1/transactions/create', methods=['POST'])
@@ -77,7 +83,6 @@ def api_transactions_update():
 def api_categories_get():
     # TODO
     return jsonify({"success": True})
-
 
 
 @app.route('/api/v1/categories/create', methods=['POST'])
