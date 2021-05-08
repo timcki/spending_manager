@@ -1,0 +1,32 @@
+.main-container aside nav {
+	margin-top: 30px;
+}
+.main-container aside nav ul {
+	padding: 0;
+	list-style: none;
+}
+.main-container aside nav ul li a {
+	font-size: 1.2rem;
+	display: block;
+	color: #023047;
+	text-decoration: none;
+	text-transform: capitalize;
+	text-align: center;
+	background-color: #ccc;
+	width: 60%;
+	margin: 1.5rem auto;
+	padding: 5px 5px;
+	border-radius: 10px;
+	border: 1px solid black;
+	transition: background-color 0.3s ease-out, border-color 0.3s ease-out,
+		color 0.3s ease-out;
+}
+
+.main-container aside nav ul li a:hover {
+	background-color: rgb(238, 238, 238);
+}
+.main-container aside nav ul li a.active {
+	color: rgb(214, 166, 10);
+	border-color: rgb(179, 140, 14);
+	background-color: rgb(238, 238, 238);
+}

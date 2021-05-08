@@ -1,0 +1,11 @@
+.user-panel{
+    background-color: #ddd;
+    width:90%;
+    margin: 20px auto;
+    padding: 20px 15px;
+    border-radius: 20px;
+    border: 1px solid black;
+}
+.user-panel p{
+    margin-bottom:20px;
+}
