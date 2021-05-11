@@ -3,10 +3,10 @@ from flask import render_template, jsonify, request
 from flask_jwt_extended import create_access_token
 import json
 import spending_manager.database as smDB
+from datetime import date
 
 db = smDB.SpendingManagerDB()
 db.set_triggers()
-
 
 
 @app.after_request
@@ -19,6 +19,7 @@ def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Headers', 'Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
     return response
+
 
 @app.route('/')
 def hello_world():
@@ -64,19 +65,54 @@ def api_registration():
 
 @app.route('/api/v1/transactions/create', methods=['POST'])
 def api_transactions_create():
-    # TODO
-    return jsonify({"success": True})
+    if request.is_json:
+        account_id = request.json.get("account_id", None)
+        amount = request.json.get("amount", None)
+        category_id = request.json.get("category_id", None)
+        transaction_type = request.json.get("transaction_type", None)
+        other_account_id = request.json.get("other_account_id", None)
+        transaction_status = request.json.get("transaction_status", None)
+        person = request.json.get("person", None)
+        recipient = request.json.get("recipient", None)
+        transaction_date = date.today()
+        cyclic_period = request.json.get("cyclic_period", None)
+
+        db.insert_transaction(account_id, amount, category_id, transaction_type, other_account_id, transaction_status,
+                              person, recipient, transaction_date, cyclic_period)
+
+        return jsonify({"success": True, "mssg": "Pomyślnie dodano wpis transakcji!"})
+    return jsonify({"success": False, "mssg": "Niepowodzenie przy probie dodania wpisu transakcji!"})
 
 
 @app.route('/api/v1/transactions/get', methods=['GET'])
 def api_transactions_get():
-    # TODO
-    return jsonify({"success": True})
+    if request.is_json:
+        account_id = request.json.get("account_id", None)
+        result = db.get_transaction(account_id)
+        if result is not None:
+            return jsonify(result)
+        else:
+            return jsonify({})
+
+    return jsonify({"success": False})
 
 
 @app.route('/api/v1/transactions/update', methods=['POST'])  # moze lepsze bedzie tutaj PUT?
 def api_transactions_update():
-    # TODO
+    if request.is_json:
+        transaction_id = request.json.get("transaction_id", None)
+        attribute = request.json.get("attribute", None)
+        value = request.json.get("value", None)
+
+        db.update_transaction(transaction_id, attribute, value)
+    return jsonify({"success": True})
+
+
+@app.route('/api/v1/transactions/delete', methods=['POST'])
+def api_transactions_delete():
+    if request.is_json:
+        transaction_id = request.json.get("transaction_id", None)
+        db.delete_transaction(transaction_id)
     return jsonify({"success": True})
 
 
