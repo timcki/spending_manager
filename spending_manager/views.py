@@ -5,6 +5,7 @@ import json
 import spending_manager.database as smDB
 
 db = smDB.SpendingManagerDB()
+db.set_triggers()
 
 
 

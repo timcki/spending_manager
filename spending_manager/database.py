@@ -1,5 +1,18 @@
 from pymongo import MongoClient
+from mongotriggers import MongoTrigger
 import os
+
+
+def transaction_insert_trigger(callback):
+    print("Insertion trigger called")
+
+
+def transaction_update_trigger(callback):
+    print("Update trigger called")
+
+
+def transaction_delete_trigger(callback):
+    print("Delete trigger called")
 
 
 class SpendingManagerDB():
@@ -11,6 +24,12 @@ class SpendingManagerDB():
         self.account_records = self.db.account
         self.transaction_records = self.db.transaction
         self.categories_records = self.db.categories
+        self.triggers = MongoTrigger(self.client)
+
+    def set_triggers(self):
+        self.triggers.register_insert_trigger(transaction_insert_trigger, db_name="Project_IO", collection_name="transaction")
+        self.triggers.register_insert_trigger(transaction_update_trigger, db_name="Project_IO", collection_name="transaction")
+        self.triggers.register_insert_trigger(transaction_update_trigger, db_name="Project_IO", collection_name="transaction")
 
     def get_user(self, username):
         result = self.user_records.find_one({'user_name': username})
