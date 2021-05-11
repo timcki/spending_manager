@@ -1,8 +1,9 @@
 from pymongo import MongoClient
 import os
+from datetime import datetime, timedelta, timezone
 
 
-class SpendingManagerDB():
+class SpendingManagerDB:
     def __init__(self):
         self.client = MongoClient(
             "mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(os.environ.get("SPENDING_MANAGER_DB")))
@@ -11,6 +12,8 @@ class SpendingManagerDB():
         self.account_records = self.db.account
         self.transaction_records = self.db.transaction
         self.categories_records = self.db.categories
+        self.blocklisted_tokens = self.db.blocklisted
+        self.actualize_blocklisted()
 
     def get_user(self, username):
         result = self.user_records.find_one({'user_name': username})
@@ -34,6 +37,29 @@ class SpendingManagerDB():
         else:
             return True
 
+    def get_category(self, username):
+        result = self.categories_records.find({"username": username})
+        if result is None:
+            return False
+        else:
+            return list(result)
+
+    def insert_category(self, username, acc_name, acc_balance):
+        if self.categories_records.find_one({"user_name": username, "name": acc_name}):
+            return False
+        else:
+            self.categories_records.insert({"user_name": username, "name": acc_name, "balance": acc_balance})
+            return True
+
+    def insert_blocklisted(self, jti, created_at):
+        self.blocklisted_tokens.insert({"jti": jti, "created_at": created_at})
+
+    def get_blocklisted(self, jti):
+        return self.blocklisted_tokens.find_one({"jti": jti}) is not None
+
+    def actualize_blocklisted(self):
+        self.blocklisted_tokens.delete_many({"created_at": {'$lt': datetime.now(timezone.utc)-timedelta(minutes=30)}})
+
     # TODO
     ''' 
     def get_transaction(self):
@@ -43,8 +69,4 @@ class SpendingManagerDB():
     def delete_transaction(self):
 
     def update_transaction(self):
-
-    def get_category(self):
-    
-    def insert_category(self):
     '''
