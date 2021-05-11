@@ -141,7 +141,7 @@ def api_categories_create():
 @jwt_required()
 def api_accounts_get():
     username = get_jwt_identity()
-    users_accounts = db.get_category(username)
+    users_accounts = db.get_account(username)
     return jsonify({"success": True, "accounts": users_accounts})
 
 
@@ -152,7 +152,7 @@ def api_accounts_create():
         acc_name = request.json.get("acc_name", None)
         acc_balance = request.json.get("acc_balance", None)
         username = get_jwt_identity()
-        if db.insert_category(username, acc_name, acc_balance):
+        if db.insert_account(username, acc_name, acc_balance):
             return jsonify({"success": True, "mssg": "Poprawnie dodano konto"})
         else:
             return jsonify({"success": False, "mssg": "Konto z podaną nazwą już istnieje!"})

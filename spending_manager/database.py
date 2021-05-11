@@ -37,18 +37,18 @@ class SpendingManagerDB:
         else:
             return True
 
-    def get_category(self, username):
-        result = self.categories_records.find({"username": username})
+    def get_account(self, username):
+        result = self.account_records.find({"user_id": username})
         if result is None:
             return False
         else:
             return list(result)
 
-    def insert_category(self, username, acc_name, acc_balance):
-        if self.categories_records.find_one({"user_name": username, "name": acc_name}):
+    def insert_account(self, username, acc_name, acc_balance):
+        if self.account_records.find_one({"user_id": username, "name": acc_name}):
             return False
         else:
-            self.categories_records.insert({"user_name": username, "name": acc_name, "balance": acc_balance})
+            self.account_records.insert({"user_id": username, "name": acc_name, "balance": acc_balance})
             return True
 
     def insert_blocklisted(self, jti, created_at):
