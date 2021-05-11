@@ -1,11 +1,13 @@
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 import os
 
 
 class SpendingManagerDB():
     def __init__(self):
         self.client = MongoClient(
-            "mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(os.environ.get("SPENDING_MANAGER_DB")))
+            "mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(
+                os.environ.get("SPENDING_MANAGER_DB")))
         self.db = self.client.get_database('Project_IO')
         self.user_records = self.db.user
         self.account_records = self.db.account
@@ -34,16 +36,38 @@ class SpendingManagerDB():
         else:
             return True
 
+    def get_transaction(self, account_id):
+        result = self.transaction_records.find({'account_id': account_id})
+        if result is None:
+            return None
+        else:
+            return list(result)
+
+    def insert_transaction(self, account_id, amount, category_id, transaction_type, other_account_id,
+                           transaction_status, person, recipient, transaction_date, cyclic_period):
+        transaction_json = {'account_id': account_id,
+                            'amount': amount,
+                            'category_id': category_id,
+                            'transaction_type': transaction_type,
+                            'other_account_id': other_account_id,
+                            'transaction_status': transaction_status,
+                            'person': person,
+                            'recipient': recipient,
+                            'transaction_date': transaction_date,
+                            'cyclic_period': cyclic_period
+                            }
+        self.transaction_records.insert_one(transaction_json)
+
+    def delete_transaction(self, transaction_id):
+        self.transaction_records.delete_one({'_id': ObjectId(transaction_id)})
+
+    def update_transaction(self, transaction_id, attribute, value):
+        filter = {'_id': ObjectId(transaction_id)}
+        change = { "$set": {str(attribute): value}}
+        self.transaction_records.update_one(filter, change)
+
     # TODO
     ''' 
-    def get_transaction(self):
-
-    def insert_transaction(self):
-
-    def delete_transaction(self):
-
-    def update_transaction(self):
-
     def get_category(self):
     
     def insert_category(self):
