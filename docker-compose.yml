@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+    mongo:
+        image: 'mongo:latest'
+        restart: always
+        environment:
+            - MONGO_INITDB_DATABASE=spending_manager
+            - MONGO_INITDB_ROOT_USERNAME=user
+            - MONGO_INITDB_ROOT_PASSWORD=password
+
+    app:
+        depends_on:
+            - mongo
+        build: .
+        ports:
+            - '5000:5000'
