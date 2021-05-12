@@ -1,6 +1,7 @@
 from spending_manager import app
 from flask import render_template, jsonify, request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, \
+    set_access_cookies, get_jwt
 import json
 import spending_manager.database as smDB
 from datetime import date
@@ -116,12 +117,25 @@ def api_transactions_delete():
 
 
 @app.route('/api/v1/categories/get', methods=['GET'])
+@jwt_required()
 def api_categories_get():
-    # TODO
-    return jsonify({"success": True})
+    username = get_jwt_identity()
+    result = db.get_categories(username)
+    if result is not None:
+        return jsonify(result)
+    else:
+        return jsonify({})
 
 
 @app.route('/api/v1/categories/create', methods=['POST'])
+@jwt_required()
 def api_categories_create():
-    # TODO
-    return jsonify({"success": True})
+    if request.is_json:
+        username = get_jwt_identity()
+        name = request.json.get("name", None)
+        icon_colour = request.json.get("icon_colour", None)
+
+        db.insert_category(name, icon_colour, username)
+        
+        return jsonify({"success": True, "mssg": "Pomyślnie dodano kategorię!"})
+    return jsonify({"success": False, "mssg": "Niepowodzenie przy próbie dodania kategorii!"})

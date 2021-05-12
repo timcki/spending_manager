@@ -7,7 +7,7 @@ class SpendingManagerDB():
     def __init__(self):
         self.client = MongoClient(
             "mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(
-                os.environ.get("SPENDING_MANAGER_DB")))
+                "8TTsQBAwvDusJGg"))
         self.db = self.client.get_database('Project_IO')
         self.user_records = self.db.user
         self.account_records = self.db.account
@@ -66,9 +66,21 @@ class SpendingManagerDB():
         change = { "$set": {str(attribute): value}}
         self.transaction_records.update_one(filter, change)
 
-    # TODO
-    ''' 
-    def get_category(self):
+    def get_categories(self, username):
+        result = self.categories_records.find({'username': username})
+        result = list(result)
+        default_categories = self.categories_records.find({'username': "default"})
+        default_categories = list(default_categories)
+        result = result + default_categories
+        for i in result:
+            i['_id'] = str(i['_id'])
+        return result
+
+
+    def insert_category(self, name, icon_colour, username):
+        category_json = {'name': name,
+                         'icon_colour': icon_colour,
+                         'username': username
+                        }
+        self.categories_records.insert_one(category_json)
     
-    def insert_category(self):
-    '''
