@@ -7,7 +7,7 @@ class SpendingManagerDB():
     def __init__(self):
         self.client = MongoClient(
             "mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(
-                "8TTsQBAwvDusJGg"))
+                os.environ.get("SPENDING_MANAGER_DB")))
         self.db = self.client.get_database('Project_IO')
         self.user_records = self.db.user
         self.account_records = self.db.account
