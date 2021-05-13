@@ -7,7 +7,7 @@ class SpendingManagerDB():
     def __init__(self):
         self.client = MongoClient(
             "mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(
-                os.environ.get("SPENDING_MANAGER_DB")))
+                "8TTsQBAwvDusJGg"))
         self.db = self.client.get_database('Project_IO')
         self.user_records = self.db.user
         self.account_records = self.db.account
@@ -69,7 +69,7 @@ class SpendingManagerDB():
     def get_categories(self, username):
         result = self.categories_records.find({'username': username})
         result = list(result)
-        default_categories = self.categories_records.find({'username': "default"})
+        default_categories = self.categories_records.find({'username': ""})
         default_categories = list(default_categories)
         result = result + default_categories
         for i in result:
