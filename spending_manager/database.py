@@ -1,20 +1,7 @@
 from pymongo import MongoClient
-from mongotriggers import MongoTrigger
 from bson.objectid import ObjectId
 import os
 from TransactionType import TransactionType
-
-
-
-
-
-def transaction_update_trigger(callback):
-    print("Update trigger called")
-
-
-
-def transaction_delete_trigger(callback):
-    print("Delete trigger called")
 
 
 class SpendingManagerDB():
@@ -27,12 +14,6 @@ class SpendingManagerDB():
         self.account_records = self.db.account
         self.transaction_records = self.db.transaction
         self.categories_records = self.db.categories
-        self.triggers = MongoTrigger(self.client)
-
-    def set_triggers(self):
-        #self.triggers.register_insert_trigger(self.transaction_insert_trigger, db_name="Project_IO", collection_name="transaction")
-        self.triggers.register_insert_trigger(transaction_update_trigger, db_name="Project_IO", collection_name="transaction")
-        self.triggers.register_insert_trigger(transaction_update_trigger, db_name="Project_IO", collection_name="transaction")
 
     def get_user(self, username):
         result = self.user_records.find_one({'user_name': username})
@@ -45,9 +26,7 @@ class SpendingManagerDB():
         user_json = {'user_name': user_name,
                      'password': password
                      }
-        self.triggers.tail_oplog()
         self.user_records.insert_one(user_json)
-        self.triggers.stop_tail()
 
     def get_user_login_data(self, username, password):
         result = self.user_records.find_one({'user_name': username,
@@ -79,30 +58,34 @@ class SpendingManagerDB():
                             'cyclic_period': cyclic_period
                             }
         self.transaction_records.insert_one(transaction_json)
-        self.update_balance_on_insert(account_id, transaction_type, amount)
+        self.update_balance_on_insert(account_id, transaction_type, amount,other_account_id)
 
     def delete_transaction(self, transaction_id):
+        delete_data = self.update_balance_on_delete(transaction_id)
         self.transaction_records.delete_one({'_id': ObjectId(transaction_id)})
+        self.update_balance_on_insert(delete_data["account_id"], delete_data["transaction_type"],
+                                      -delete_data["old_amount"], delete_data["other_account_id"])
 
     def update_transaction(self, transaction_id, attribute, value):
         filter = {'_id': ObjectId(transaction_id)}
         change = {"$set": {str(attribute): value}}
-        self.update_balance_on_update(transaction_id, value)
+        update_data = self.update_balance_on_update(transaction_id, value)
         self.transaction_records.update_one(filter, change)
-
+        self.update_balance_on_insert(update_data["account_id"], update_data["transaction_type"], update_data["delta"],
+                                      update_data["other_account_id"])
 
     def update_balance_on_insert(self, account_id, transaction_type, amount, other_account_id):
         filter = {'_id': ObjectId(account_id)}
         account = self.account_records.find_one(filter)
         new_balance = account["balance"]
-        if transaction_type == TransactionType.EXPENSE:
+        if transaction_type == TransactionType.EXPENSE or transaction_type == TransactionType.LENT:
             new_balance -= amount
         elif transaction_type == TransactionType.TRANSFER and ObjectId.is_valid(other_account_id):
             new_balance -= amount
             other_account = self.account_records.find_one({'_id': ObjectId(other_account_id)})
             new_other_balance = other_account['balance'] + amount
             self.account_records.update_one({'_id': ObjectId(other_account_id)}, {'$set': {'balance': new_other_balance}})
-        elif transaction_type == TransactionType.INCOME:
+        elif transaction_type == TransactionType.INCOME or transaction_type == TransactionType.BORROWED:
             new_balance += amount
 
         change = {'$set': {'balance': new_balance}}
@@ -112,18 +95,32 @@ class SpendingManagerDB():
         transaction = self.transaction_records.find_one({'_id': ObjectId(transaction_id)})
         old_amount = transaction['amount']
         account_id = transaction['account_id']
-        #other_account_id = transaction['other_account_id']
         transaction_type = transaction['transaction_type']
+        other_account_id = 'other_account_id' #placeholder
+        if transaction_type == TransactionType.TRANSFER:
+            other_account_id = transaction['other_account_id']
         delta = value - old_amount
-        self.update_balance_on_insert(account_id,transaction_type,delta, 'sth')
+        return {
+            "account_id": account_id,
+            "transaction_type": transaction_type,
+            "delta": delta,
+            "other_account_id": other_account_id
+        }
 
     def update_balance_on_delete(self, transaction_id):
         transaction = self.transaction_records.find_one({'_id': ObjectId(transaction_id)})
         old_amount = transaction['amount']
         account_id = transaction['account_id']
-        #other_account_id = transaction['other_account_id']
         transaction_type = transaction['transaction_type']
-        self.update_balance_on_insert(account_id,transaction_type, -old_amount, 'sth')
+        other_account_id = 'other_account_id'  # placeholder
+        if transaction_type == TransactionType.TRANSFER:
+            other_account_id = transaction['other_account_id']
+        return {
+            "account_id": account_id,
+            "transaction_type": transaction_type,
+            "old_amount": old_amount,
+            "other_account_id": other_account_id
+        }
 
 
 
@@ -137,7 +134,10 @@ class SpendingManagerDB():
 
 if __name__ == "__main__":
     db = SpendingManagerDB()
-    db.update_balance_on_insert("609ad3a7d48b1b7a2d3b8bc1", TransactionType.TRANSFER, 50, "609ae959d48b1b7a2d3b8bc2")
-    db.update_balance_on_update("609ad29cd48b1b7a2d3b8bc0", 40)
-    db.update_balance_on_delete("609ad29cd48b1b7a2d3b8bc0")
+    # db.update_balance_on_insert("609ad3a7d48b1b7a2d3b8bc1", TransactionType.TRANSFER, 50, "609ae959d48b1b7a2d3b8bc2")
+    # db.update_balance_on_update("609ffdc37cc3c60adc2a20c6", 60)
+    # db.update_balance_on_delete("609ad29cd48b1b7a2d3b8bc0")
+    # db.insert_transaction("609ad3a7d48b1b7a2d3b8bc1", 100, "kategoria testowa przychod", TransactionType.INCOME, "not_cyclic","executed","someone","someone","somedate","no")
+    # db.update_transaction("60a004e1cb3c089809dc8533", "amount", 120)
+    # db.delete_transaction("60a004e1cb3c089809dc8533")
 

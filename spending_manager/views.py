@@ -6,7 +6,6 @@ import spending_manager.database as smDB
 from datetime import date
 
 db = smDB.SpendingManagerDB()
-db.set_triggers()
 
 
 @app.after_request
