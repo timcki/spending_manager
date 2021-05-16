@@ -127,7 +127,7 @@ def api_categories_get():
     username = get_jwt_identity()
     result = db.get_categories(username)
     if result is not None:
-        return jsonify(result)
+        return result
     else:
         return jsonify({})
 

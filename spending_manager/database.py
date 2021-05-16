@@ -88,9 +88,8 @@ class SpendingManagerDB():
         default_categories = self.categories_records.find({'username': ""})
         default_categories = list(default_categories)
         result = result + default_categories
-        for i in result:
-            i['_id'] = str(i['_id'])
-        return result
+
+        return json_response(result, cls=MongoJsonEncoder)
 
 
     def insert_category(self, name, icon_colour, username):
