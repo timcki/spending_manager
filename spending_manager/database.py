@@ -1,6 +1,22 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-import os
+from flask import make_response
+import os, json, bson
+
+
+def json_response(obj, cls=None):
+    response = make_response(json.dumps(obj, cls=cls))
+    response.content_type = 'application/json'
+
+    return response
+
+
+class MongoJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, bson.ObjectId):
+            return str(obj)
+
+        return json.JSONEncoder.default(self, obj)
 
 
 class SpendingManagerDB():
@@ -37,11 +53,11 @@ class SpendingManagerDB():
             return True
 
     def get_transaction(self, account_id):
-        result = self.transaction_records.find({'account_id': account_id})
+        result = [doc for doc in self.transaction_records.find({'account_id': account_id})]
         if result is None:
             return None
         else:
-            return list(result)
+            return json_response(result, cls=MongoJsonEncoder)
 
     def insert_transaction(self, account_id, amount, category_id, transaction_type, other_account_id,
                            transaction_status, person, recipient, transaction_date, cyclic_period):

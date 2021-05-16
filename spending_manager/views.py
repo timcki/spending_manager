@@ -35,6 +35,11 @@ def account_register():
     return render_template('account_register.html')
 
 
+@app.route('/dbase_test')
+def database_route_test():
+    return render_template('database_Test.html')
+
+
 @app.route('/api/v1/login', methods=['POST', 'OPTIONS'])
 def api_login():
     if request.is_json:
@@ -73,7 +78,7 @@ def api_transactions_create():
         transaction_status = request.json.get("transaction_status", None)
         person = request.json.get("person", None)
         recipient = request.json.get("recipient", None)
-        transaction_date = date.today()
+        transaction_date = str(date.today())
         cyclic_period = request.json.get("cyclic_period", None)
 
         db.insert_transaction(account_id, amount, category_id, transaction_type, other_account_id, transaction_status,
@@ -83,13 +88,13 @@ def api_transactions_create():
     return jsonify({"success": False, "mssg": "Niepowodzenie przy probie dodania wpisu transakcji!"})
 
 
-@app.route('/api/v1/transactions/get', methods=['GET'])
+@app.route('/api/v1/transactions/get', methods=['POST','GET'])
 def api_transactions_get():
     if request.is_json:
         account_id = request.json.get("account_id", None)
         result = db.get_transaction(account_id)
         if result is not None:
-            return jsonify(result)
+            return result
         else:
             return jsonify({})
 
