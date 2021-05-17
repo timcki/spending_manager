@@ -2,6 +2,8 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
 from TransactionType import TransactionType
+from datetime import datetime, timedelta, timezone
+
 
 
 class SpendingManagerDB:
@@ -14,6 +16,8 @@ class SpendingManagerDB:
         self.account_records = self.db.account
         self.transaction_records = self.db.transaction
         self.categories_records = self.db.categories
+        self.blocklisted_tokens = self.db.blocklisted
+        self.actualize_blocklisted()
 
     def get_user(self, username):
         result = self.user_records.find_one({'user_name': username})
@@ -41,6 +45,13 @@ class SpendingManagerDB:
         result = self.transaction_records.find({'account_id': account_id})
         if result is None:
             return None
+		else:
+			return list(result)
+
+    def get_account(self, username):
+        result = self.account_records.find({"user_name": username})
+        if result is None:
+            return False
         else:
             return list(result)
 
@@ -66,6 +77,15 @@ class SpendingManagerDB:
                             }
         self.transaction_records.insert_one(transaction_json)
         self.update_balance_on_insert(account_id, transaction_type, amount,other_account_id)
+
+    def insert_blocklisted(self, jti, created_at):
+        self.blocklisted_tokens.insert_one({"jti": jti, "created_at": created_at})
+
+    def get_blocklisted(self, jti):
+        return self.blocklisted_tokens.find_one({"jti": jti}) is not None
+
+    def actualize_blocklisted(self):
+        self.blocklisted_tokens.delete_many({"created_at": {'$lt': datetime.now(timezone.utc)-timedelta(minutes=30)}})
 
     def delete_transaction(self, transaction_id):
         before_delete_data = self.get_transaction_data_by_id(transaction_id)
@@ -120,16 +140,3 @@ class SpendingManagerDB:
     def update_balance_on_delete(self, before_delete_data):
         self.update_balance_on_insert(before_delete_data["account_id"], before_delete_data["transaction_type"],
                                       -before_delete_data["amount"], before_delete_data["other_account_id"])
-
-
-
-
-    # TODO
-    ''' 
-    def get_category(self):
-    
-    def insert_category(self):
-    '''
-
-
-
