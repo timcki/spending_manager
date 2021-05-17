@@ -4,8 +4,8 @@ import Main from './main_page/Main';
 function App() {
 	return (
 		<div className="App">
-						<Home />
-			{/* {<Main />} */}
+			<Home />
+			{/* 			{<Main />} */}
 		</div>
 	);
 }
