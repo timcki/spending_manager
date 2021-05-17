@@ -20,7 +20,7 @@ class SpendingManagerDB:
         if result is None:
             return None
         else:
-            return list(result)
+            return result
 
     def insert_user(self, user_name, password):
         user_json = {'user_name': user_name,
@@ -43,6 +43,13 @@ class SpendingManagerDB:
             return None
         else:
             return list(result)
+
+    def insert_account(self, username, acc_name, acc_balance):
+        if self.account_records.find_one({"user_name": username, "name": acc_name}):
+            return False
+        else:
+            self.account_records.insert_one({"user_name": username, "name": acc_name, "balance": acc_balance})
+            return True
 
     def insert_transaction(self, account_id, amount, category_id, transaction_type, other_account_id,
                            transaction_status, person, recipient, transaction_date, cyclic_period):
@@ -92,7 +99,7 @@ class SpendingManagerDB:
 
     def get_transaction_data_by_id(self, transaction_id):
         transaction = self.transaction_records.find_one({'_id': ObjectId(transaction_id)})
-        old_amount = transaction['amount']
+        amount = transaction['amount']
         account_id = transaction['account_id']
         transaction_type = transaction['transaction_type']
         other_account_id = 'other_account_id'  # placeholder
@@ -101,18 +108,18 @@ class SpendingManagerDB:
         return {
             "account_id": account_id,
             "transaction_type": transaction_type,
-            "old_amount": old_amount,
+            "amount": amount,
             "other_account_id": other_account_id
         }
 
     def update_balance_on_update(self, before_update_data, after_update_data):
         self.update_balance_on_delete(before_update_data)
         self.update_balance_on_insert(after_update_data["account_id"], after_update_data["transaction_type"],
-                                      after_update_data["old_amount"], after_update_data["other_account_id"])
+                                      after_update_data["amount"], after_update_data["other_account_id"])
 
     def update_balance_on_delete(self, before_delete_data):
         self.update_balance_on_insert(before_delete_data["account_id"], before_delete_data["transaction_type"],
-                                      -before_delete_data["old_amount"], before_delete_data["other_account_id"])
+                                      -before_delete_data["amount"], before_delete_data["other_account_id"])
 
 
 
@@ -125,12 +132,4 @@ class SpendingManagerDB:
     '''
 
 
-if __name__ == "__main__":
-    db = SpendingManagerDB()
-    # db.update_balance_on_insert("609ad3a7d48b1b7a2d3b8bc1", TransactionType.TRANSFER, 50, "609ae959d48b1b7a2d3b8bc2")
-    # db.update_balance_on_update("609ffdc37cc3c60adc2a20c6", 60)
-    # db.update_balance_on_delete("609ad29cd48b1b7a2d3b8bc0")
-    #db.insert_transaction("609ad3a7d48b1b7a2d3b8bc1", 7, "kategoria testowa przychod1", TransactionType.EXPENSE, "not_cyclic","executed","someone","someone","somedate","no")
-    #db.update_transaction("60a16b858d2acd4ee1d50535", "transaction_type", 1)
-    #db.delete_transaction("60a16b858d2acd4ee1d50535")
 
