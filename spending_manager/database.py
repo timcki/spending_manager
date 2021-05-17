@@ -38,7 +38,7 @@ class SpendingManagerDB:
             return True
 
     def get_account(self, username):
-        result = self.account_records.find({"username": username})
+        result = self.account_records.find({"user_name": username})
         if result is None:
             return False
         else:
@@ -48,11 +48,11 @@ class SpendingManagerDB:
         if self.account_records.find_one({"user_name": username, "name": acc_name}):
             return False
         else:
-            self.account_records.insert({"user_name": username, "name": acc_name, "balance": acc_balance})
+            self.account_records.insert_one({"user_name": username, "name": acc_name, "balance": acc_balance})
             return True
 
     def insert_blocklisted(self, jti, created_at):
-        self.blocklisted_tokens.insert({"jti": jti, "created_at": created_at})
+        self.blocklisted_tokens.insert_one({"jti": jti, "created_at": created_at})
 
     def get_blocklisted(self, jti):
         return self.blocklisted_tokens.find_one({"jti": jti}) is not None
