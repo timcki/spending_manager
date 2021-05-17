@@ -20,12 +20,16 @@ class Account_Login extends React.Component {
             body: JSON.stringify(this.state)
         }).then(response => {
             response.json().then( result => {
-                console.warn("result",result);
-                localStorage.setItem('logged', JSON.stringify({
-                    is_logged:true,
-                    token:result.token
-                }))
-                this.setState({is_logged:true})
+                if(!result.success){
+                    alert(result.mssg);
+                }else {
+                    console.warn("result", result);
+                    localStorage.setItem('logged', JSON.stringify({
+                        is_logged: true,
+                        token: result.token
+                    }))
+                    this.setState({is_logged: true})
+                }
             })
         })
     }
