@@ -73,16 +73,16 @@ class SpendingManagerDB:
         self.update_balance_on_delete(before_delete_data)
 
     def update_transaction(self, transaction_id, attribute, value):
-        filter = {'_id': ObjectId(transaction_id)}
+        filter_dict = {'_id': ObjectId(transaction_id)}
         change = {"$set": {str(attribute): value}}
         before_update_data = self.get_transaction_data_by_id(transaction_id)
-        self.transaction_records.update_one(filter, change)
+        self.transaction_records.update_one(filter_dict, change)
         after_update_data = self.get_transaction_data_by_id(transaction_id)
         self.update_balance_on_update(before_update_data,after_update_data)
 
     def update_balance_on_insert(self, account_id, transaction_type, amount, other_account_id):
-        filter = {'_id': ObjectId(account_id)}
-        account = self.account_records.find_one(filter)
+        filter_dict = {'_id': ObjectId(account_id)}
+        account = self.account_records.find_one(filter_dict)
         new_balance = account["balance"]
         if transaction_type == TransactionType.EXPENSE or transaction_type == TransactionType.LENT:
             new_balance -= amount
@@ -95,7 +95,7 @@ class SpendingManagerDB:
             new_balance += amount
 
         change = {'$set': {'balance': new_balance}}
-        self.account_records.update_one(filter, change)
+        self.account_records.update_one(filter_dict, change)
 
     def get_transaction_data_by_id(self, transaction_id):
         transaction = self.transaction_records.find_one({'_id': ObjectId(transaction_id)})
