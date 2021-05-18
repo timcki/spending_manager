@@ -2,10 +2,11 @@ from spending_manager import app
 from flask import render_template, jsonify, request
 from flask_jwt_extended import create_access_token
 import json
-import spending_manager.database as smDB
+#import spending_manager.database as smDB
+from spending_manager.models import User, Transaction
 from datetime import date
 
-db = smDB.SpendingManagerDB()
+#db = smDB.SpendingManagerDB()
 
 
 @app.after_request
@@ -35,7 +36,7 @@ def account_register():
     return render_template('account_register.html')
 
 
-@app.route('/dbase_test')
+@app.route('/db_test')
 def database_route_test():
     return render_template('database_Test.html')
 
@@ -60,30 +61,32 @@ def api_registration():
     if request.is_json:
         u = request.json.get("username", None)
         p = request.json.get("password", None)
-        if db.get_user(u) is not None:
-            return jsonify({"success": False, "mssg": "Użytkownik o podanym loginie już istnieje!"})
+        user = User.objects(username=u).first()
+        if user is not None:
+            return jsonify({"success": False, "msg": "Użytkownik o podanym loginie już istnieje!"})
         else:
-            db.insert_user(u, p)
-            return jsonify({"success": True, "mssg": "Pomyślnie dodano nowego użytkownika!"})
+            # TODO: Add hashing
+            User(username=u, password=p).save()
+            return jsonify({"success": True, "msg": "Pomyślnie dodano nowego użytkownika!"})
+
+    return jsonify({"success": False, "msg": "Użytkownik o podanym loginie już istnieje!"})
+
 
 
 @app.route('/api/v1/transactions/create', methods=['POST'])
 def api_transactions_create():
     if request.is_json:
-        account_id = request.json.get("account_id", None)
-        amount = request.json.get("amount", None)
-        category_id = request.json.get("category_id", None)
-        transaction_type = request.json.get("transaction_type", None)
-        other_account_id = request.json.get("other_account_id", None)
-        transaction_status = request.json.get("transaction_status", None)
-        person = request.json.get("person", None)
-        recipient = request.json.get("recipient", None)
-        transaction_date = str(date.today())
-        cyclic_period = request.json.get("cyclic_period", None)
-
-        db.insert_transaction(account_id, amount, category_id, transaction_type, other_account_id, transaction_status,
-                              person, recipient, transaction_date, cyclic_period)
-
+        Transaction(account_id=request.json.get("account_id", None),
+                    amount=request.json.get("amount", None),
+                    category_id = request.json.get("category_id", None),
+                    transaction_type = request.json.get("transaction_type", None),
+                    other_account_id = request.json.get("other_account_id", None),
+                    transaction_status = request.json.get("transaction_status", None),
+                    person = request.json.get("person", None),
+                    recipient = request.json.get("recipient", None),
+                    transaction_date = str(date.today()),
+                    cyclic_period = request.json.get("cyclic_period", None)
+                    ).save()
         return jsonify({"success": True, "mssg": "Pomyślnie dodano wpis transakcji!"})
     return jsonify({"success": False, "mssg": "Niepowodzenie przy probie dodania wpisu transakcji!"})
 
@@ -92,9 +95,10 @@ def api_transactions_create():
 def api_transactions_get():
     if request.is_json:
         account_id = request.json.get("account_id", None)
-        result = db.get_transaction(account_id)
-        if result is not None:
-            return result
+        tx = Transaction.objects(account_id=account_id).first()
+        if tx is not None:
+            #print(tx.to_json())
+            return jsonify(tx.to_json())
         else:
             return jsonify({})
 
@@ -108,7 +112,9 @@ def api_transactions_update():
         attribute = request.json.get("attribute", None)
         value = request.json.get("value", None)
 
-        db.update_transaction(transaction_id, attribute, value)
+        tx = Transaction.objects(transaction_id=transaction_id).first()
+        tx.update(attribute=attribute, value=value)
+
     return jsonify({"success": True})
 
 
@@ -116,7 +122,8 @@ def api_transactions_update():
 def api_transactions_delete():
     if request.is_json:
         transaction_id = request.json.get("transaction_id", None)
-        db.delete_transaction(transaction_id)
+        tx = Transaction.objects(transaction_id=transaction_id).first()
+        tx.delete()
     return jsonify({"success": True})
 
 

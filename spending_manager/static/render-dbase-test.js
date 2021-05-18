@@ -32,7 +32,7 @@ class Dbase_test extends React.Component {
     insert_t(event){
         event.preventDefault();
 
-        fetch('http://127.0.0.1:5000/api/v1/transactions/create',{
+        fetch('/api/v1/transactions/create',{
             method: "POST",
             mode: "cors",
             credentials: "same-origin",
@@ -48,7 +48,7 @@ class Dbase_test extends React.Component {
     get_t(event){
         event.preventDefault();
 
-        fetch('http://127.0.0.1:5000/api/v1/transactions/get',{
+        fetch('/api/v1/transactions/get',{
             method: "POST",
             mode: "cors",
             credentials: "same-origin",
@@ -64,7 +64,7 @@ class Dbase_test extends React.Component {
     delete_t(event){
         event.preventDefault();
 
-        fetch('http://127.0.0.1:5000/api/v1/transactions/delete',{
+        fetch('/api/v1/transactions/delete',{
             method: "POST",
             mode: "cors",
             credentials: "same-origin",
@@ -80,7 +80,7 @@ class Dbase_test extends React.Component {
     update_t(event){
         event.preventDefault();
 
-        fetch('http://127.0.0.1:5000/api/v1/transactions/update',{
+        fetch('/api/v1/transactions/update',{
             method: "POST",
             mode: "cors",
             credentials: "same-origin",

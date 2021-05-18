@@ -3,6 +3,8 @@ from bson.objectid import ObjectId
 from flask import make_response
 import os, json, bson
 
+from spending_manager.models import User
+
 
 def json_response(obj, cls=None):
     response = make_response(json.dumps(obj, cls=cls))
@@ -21,17 +23,23 @@ class MongoJsonEncoder(json.JSONEncoder):
 
 class SpendingManagerDB():
     def __init__(self):
-        self.client = MongoClient(
-            "mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(
-                os.environ.get("SPENDING_MANAGER_DB")))
-        self.db = self.client.get_database('Project_IO')
+        #self.client = MongoClient(
+            #"mongodb+srv://projectIO:{}@ioproject.6ezke.mongodb.net/Project_IO?retryWrites=true&w=majority".format(
+                #os.environ.get("SPENDING_MANAGER_DB")))
+
+        self.client = MongoClient("mongodb://user:password@localhost:27017/spending_manager")
+        self.db = self.client.spending_manager
+        print('aab')
         self.user_records = self.db.user
         self.account_records = self.db.account
         self.transaction_records = self.db.transaction
         self.categories_records = self.db.categories
+        print("Successful connection")
 
     def get_user(self, username):
-        result = self.user_records.find_one({'user_name': username})
+        #result = self.user_records.find_one({'user_name': username})
+        print('In get user')
+        result = User.objects(username=username).first()
         if result is None:
             return None
         else:
