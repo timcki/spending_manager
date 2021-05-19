@@ -14,7 +14,7 @@ class Account_Register extends React.Component {
             alert("Podane hasła się nie zgadzają!");
             return;
         }
-        fetch('http://127.0.0.1:5000/api/v1/registration',{
+        fetch('/api/v1/registration',{
             method: "POST",
             mode: "cors",
             credentials: "same-origin",
@@ -22,7 +22,8 @@ class Account_Register extends React.Component {
             body: JSON.stringify(this.state)
         }).then((response)=>{
             response.json().then((result)=>{
-                //TODO wyswietlic jakis komunikat
+                alert(result.mssg);
+                //TODO zmienic komunikat przykladowo na przekierowanie uzytkownika do panelu logowania
             })
         })
     }

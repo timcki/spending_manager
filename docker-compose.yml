@@ -10,6 +10,7 @@ services:
         ports:
             - '27017:27017'
 
+<<<<<<< HEAD
     frontend:
         depends_on:
             - api
@@ -25,5 +26,13 @@ services:
         build: spending_manager
         volumes:
             - $PWD:/usr/src/app
+=======
+    app:
+        depends_on:
+            - mongo
+        build: .
+        volumes:
+            - $PWD:/root
+>>>>>>> database
         ports:
             - '5000:5000'
