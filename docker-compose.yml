@@ -15,7 +15,7 @@ services:
             - api
         build: frontend
         volumes:
-            - $PWD/frontend:/usr/src/app
+            - ./frontend:/usr/src/app
         ports:
             - '3000:3000'
 
@@ -24,6 +24,6 @@ services:
             - mongo
         build: backend
         volumes:
-            - $PWD/backend:/usr/src/app
+            - ./backend:/usr/src/app
         ports:
             - '5000:5000'

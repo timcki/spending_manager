@@ -174,13 +174,11 @@ def api_transactions_delete():
 
 @app.route('/api/v1/categories/get', methods=['GET'])
 def api_categories_get():
-    # TODO
     return jsonify({}), 200
 
 
 @app.route('/api/v1/categories/create', methods=['POST'])
 def api_categories_create():
-    # TODO
     return jsonify({}), 200
 
 
