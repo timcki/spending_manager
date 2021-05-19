@@ -21,7 +21,7 @@ const LoginForm = () => {
 
 	const loginOnClickHandler = (payload, setSubmitting) => {
 		axios
-			.post('/api/v1/login', payload)
+			.post('http://api:5000/api/v1/login', payload)
 			.then(response => {
 				setSubmitting(false);
 				console.log(response);

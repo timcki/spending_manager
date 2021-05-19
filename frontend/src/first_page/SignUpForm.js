@@ -26,7 +26,7 @@ const SignUpForm = () => {
 
 	const signUpOnClickHandler = (payload, setSubmitting) => {
 		axios
-			.post('/api/v1/registration', payload)
+			.post('https://api:5000/api/v1/registration', payload)
 			.then(response => {
 				setSubmitting(false);
 				console.log(response);

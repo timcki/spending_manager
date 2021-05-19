@@ -1,18 +1,12 @@
 FROM python:3
 
-WORKDIR /root
+WORKDIR /usr/src/app
 
 COPY requirements.txt .
-COPY setup.py .
-COPY spending_manager spending_manager/
-
-RUN apt-get -y update
 RUN pip3 install -r requirements.txt
 
-RUN ls -la .
-
 ENV FLASK_APP spending_manager
-ENV FLASK_ENV developement
+ENV FLASK_ENV development
 
 EXPOSE 5000
 
