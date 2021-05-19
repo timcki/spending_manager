@@ -12,7 +12,7 @@ class Account_Login extends React.Component {
     login(event){
         event.preventDefault();
         console.log(JSON.stringify(this.state))
-        fetch('http://127.0.0.1:5000/api/v1/login', {
+        fetch('/api/v1/login', {
             method: "POST",
             mode: "cors",
             credentials: "same-origin",

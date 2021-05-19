@@ -4,6 +4,7 @@ from flask import make_response
 import os, json, bson
 
 from spending_manager.models import TransactionType
+from spending_manager import app
 from datetime import datetime, timedelta, timezone
 
 
@@ -31,7 +32,6 @@ class SpendingManagerDB:
 
         self.client = MongoClient("mongodb://user:password@localhost:27017/spending_manager")
         self.db = self.client.spending_manager
-        print('aab')
         self.user_records = self.db.user
         self.account_records = self.db.account
         self.transaction_records = self.db.transaction
@@ -101,7 +101,7 @@ class SpendingManagerDB:
         self.update_balance_on_insert(account_id, transaction_type, amount,other_account_id)
 
     def insert_blocklisted(self, jti, created_at):
-        self.blocklisted_tokens.insert_one({"jti": jti, "created_at": created_at})
+        app.blocklisted[jti] = created_at
 
     def get_blocklisted(self, jti):
         return self.blocklisted_tokens.find_one({"jti": jti}) is not None

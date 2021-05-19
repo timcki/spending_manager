@@ -1,7 +1,7 @@
 from spending_manager import app, jwt
 from spending_manager.models import User, Transaction, Account
 
-from flask import render_template, jsonify, request, redirect
+from flask import render_template, jsonify, request, redirect, make_response
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, set_access_cookies, get_jwt
 from datetime import datetime, timedelta, timezone, date
 
@@ -43,7 +43,7 @@ def add_cors_headers(response):
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
-    return db.get_blocklisted(jti)
+    return app.blocklisted[jti] is not None
 
 
 @jwt.expired_token_loader
@@ -69,14 +69,13 @@ def account_register():
 
 @app.route('/db_test')
 def database_route_test():
-    return render_template('database_Test.html')
+    return render_template('db_test.html')
 
 @app.route("/logout")
 @jwt_required(optional=True)
 def logout():
     jti = get_jwt()["jti"]
-    now = datetime.now(timezone.utc)
-    db.insert_blocklisted(jti, now)
+    app.blocklisted[jti] = datetime.now(timezone.utc)
     return redirect('/login')
 
 
@@ -87,39 +86,37 @@ def account_new_acc():
 
 @app.route('/api/v1/login', methods=['POST', 'OPTIONS'])
 def api_login():
+    print()
     if request.is_json:
+        print("login debug")
         u = request.json.get("username", None)
         p = request.json.get("password", None)
 
         user = User.objects(username=u).first()
+        #print(user.to_json())
 
         hashed_password = hash_password(p)
         if user.password == hashed_password:
             access_token = create_access_token(identity=u)
-            response = jsonify({"token": access_token, "success": True})
+            response = make_response(jsonify({"token": access_token}))
             set_access_cookies(response, access_token)
             return response, 200
-        else:
-            return jsonify({"success": False, "msg": "Błędne dane logowania!"})
 
-    return jsonify({"success": False})
+    return jsonify({}), 403
 
 
 @app.route('/api/v1/registration', methods=['POST', 'OPTIONS'])
-@jwt_required()
 def api_registration():
     if request.is_json:
         u = request.json.get("username", None)
         p = request.json.get("password", None)
         user = User.objects(username=u).first()
-        if user is not None:
-            return jsonify({"success": False, "msg": "Użytkownik o podanym loginie już istnieje!"})
-        else:
+        if user is None:
             hashed_password = hash_password(p)
             User(username=u, password=hashed_password).save()
-            return jsonify({"success": True, "msg": "Pomyślnie dodano nowego użytkownika!"})
+            return jsonify({"success": True}), 200
 
-    return jsonify({"success": False, "msg": "Użytkownik o podanym loginie już istnieje!"})
+    return jsonify({"success": False}), 400
 
 
 
@@ -129,6 +126,7 @@ def api_transactions_create():
     if request.is_json:
         account_id = request.json.get('account_id', None)
         amount = request.json.get("amount", None)
+        # TODO: Transaction(**request.json).save()
         Transaction(account_id=account_id,
                     amount=amount,
                     category_id = request.json.get("category_id", None),
@@ -142,8 +140,8 @@ def api_transactions_create():
                     ).save()
         acc = Account.objects(id=account_id).first()
         acc.update(balance=(acc.balance+amount))
-        return jsonify({"success": True, "msg": "Pomyślnie dodano wpis transakcji!"}), 200
-    return jsonify({"success": False, "msg": "Niepowodzenie przy probie dodania wpisu transakcji!"}), 200
+        return jsonify({"success": True}), 200
+    return jsonify({"success": False}), 400
 
 
 @app.route('/api/v1/transactions/get', methods=['POST','GET'])
@@ -153,12 +151,9 @@ def api_transactions_get():
         account_id = request.json.get("account_id", None)
         tx = Transaction.objects(account_id=account_id).first()
         if tx is not None:
-            #print(tx.to_json())
-            return jsonify(tx.to_json())
-        else:
-            return jsonify({})
+            return jsonify(tx.to_json()), 200
 
-    return jsonify({"success": False})
+    return jsonify({"success": False}), 404
 
 
 @app.route('/api/v1/transactions/update', methods=['POST'])  # moze lepsze bedzie tutaj PUT?
@@ -174,8 +169,9 @@ def api_transactions_update():
 
         acc = Account.objects(id=tx.account_id).first()
         acc.update(balance=(acc.balance+value))
+        return jsonify({"success": True}), 200
 
-    return jsonify({"success": True})
+    return jsonify({"success": True}), 400
 
 
 @app.route('/api/v1/transactions/delete', methods=['POST'])
@@ -223,6 +219,4 @@ def api_accounts_create():
         if Account.objects(user_id=user.id) is None:
             Account(user_id=user.id, name=name, balance=balance).save()
             return jsonify({"message": "Poprawnie dodano konto"}), 200
-        else:
-            return jsonify({"success": False, "mssg": "Konto z podaną nazwą już istnieje!"})
-    return jsonify({"success": False, "mssg": "Brak danych"})
+    return jsonify({"success": False, "mssg": "Brak danych"}), 400
