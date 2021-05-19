@@ -14,15 +14,24 @@ const LoginForm = () => {
 		},
 		{
 			name: 'password',
-			type: 'text',
+			type: 'password',
 			placeholder: 'Hasło',
 		},
 	];
 
 	const loginOnClickHandler = (payload, setSubmitting) => {
-		axios
-			.post('http://api:5000/api/v1/login', payload)
-			.then(response => {
+		const headers = {
+		  "Content-Type": "application/json",
+		  "Accept": "application/json"
+		};
+		console.log(payload)
+		axios({
+			url: 'http://localhost:5000/api/v1/login',
+			method: 'post',
+			data: payload,
+			headers: headers
+
+		}).then(response => {
 				setSubmitting(false);
 				console.log(response);
 			})

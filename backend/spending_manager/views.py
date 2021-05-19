@@ -28,16 +28,6 @@ def refresh_expiring_jwts(response):
         return response
 
 
-@app.after_request
-def add_cors_headers(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-    response.headers.add('Access-Control-Allow-Headers', 'Cache-Control')
-    response.headers.add('Access-Control-Allow-Headers', 'X-Requested-With')
-    response.headers.add('Access-Control-Allow-Headers', 'Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-    return response
 
 
 @jwt.token_in_blocklist_loader
@@ -84,11 +74,9 @@ def logout():
 def account_new_acc():
     return render_template('account_new_acc.html')
 
-@app.route('/api/v1/login', methods=['POST', 'OPTIONS'])
+@app.route('/api/v1/login', methods=['POST'])
 def api_login():
-    print()
     if request.is_json:
-        print("login debug")
         u = request.json.get("username", None)
         p = request.json.get("password", None)
 
@@ -105,7 +93,7 @@ def api_login():
     return jsonify({}), 403
 
 
-@app.route('/api/v1/registration', methods=['POST', 'OPTIONS'])
+@app.route('/api/v1/registration', methods=['POST'])
 def api_registration():
     if request.is_json:
         u = request.json.get("username", None)
@@ -206,7 +194,7 @@ def api_accounts_get():
     return jsonify(users_accounts), 200
 
 
-@app.route('/api/v1/accounts/create', methods=['POST', 'OPTIONS'])
+@app.route('/api/v1/accounts/create', methods=['POST'])
 @jwt_required()
 def api_accounts_create():
     if request.is_json:

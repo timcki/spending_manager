@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_mongoengine import MongoEngine
+from flask_cors import CORS
 # from flask_restful import Api, Resource
 # import json
 import datetime
@@ -27,6 +28,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 
 jwt = JWTManager(app)
 db = MongoEngine(app)
+cors = CORS(app)
 blocklisted = {}
 # jwt._set_error_handler_callbacks(app)
 
