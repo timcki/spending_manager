@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+    mongo:
+        image: 'mongo:latest'
+        environment:
+            - MONGO_INITDB_DATABASE=spending_manager
+            - MONGO_INITDB_ROOT_USERNAME=user
+            - MONGO_INITDB_ROOT_PASSWORD=password
+        ports:
+            - '27017:27017'
+
+    frontend:
+        depends_on:
+            - api
+        build: frontend
+        volumes:
+            - ./frontend/public:/usr/src/app/public
+            - ./frontend/src:/usr/src/app/src
+        ports:
+            - '3000:3000'
+
+    api:
+        depends_on:
+            - mongo
+        build: backend
+        volumes:
+            - ./backend:/usr/src/app
+        ports:
+            - '5000:5000'
