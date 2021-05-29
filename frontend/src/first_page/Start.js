@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 import '../styles/Start.css';
+import { NavLink } from 'react-router-dom';
 
-const Start = () => {
+const Start = props => {
 	const [isLogin, setIsLogin] = useState(true);
 
 	const getIsLoginClass = isLogin => {
@@ -30,11 +31,13 @@ const Start = () => {
 				</button>
 			</div>
 			<div className="login">
-				{isLogin ? <LoginForm /> : <SignUpForm />}
+				{isLogin ? <LoginForm {...props} /> : <SignUpForm {...props} />}
 			</div>
 			<div className="about-us">
 				<p>Dowiedz się więcej o produkcie i jego twórcach</p>
-				<button>O nas</button>
+				<button>
+					<NavLink to={'/about'}>O nas</NavLink>
+				</button>
 			</div>
 		</>
 	);

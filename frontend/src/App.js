@@ -1,13 +1,18 @@
-import Home from './first_page/Home';
-import Main from './main_page/Main';
+import { React} from 'react';
+import AppProvider from "./store/AppContext";
+import Routes from "./components/Routes";
+import { CookiesProvider } from 'react-cookie';
 
-function App() {
-	return (
-		<div className="App">
-			<Home />
-			{/* 			{<Main />} */}
-		</div>
+const App = props => {
+	return( 
+		<CookiesProvider>
+			<AppProvider>
+				<div className="App">			
+					<Routes/>
+				</div>
+			</AppProvider>
+		</CookiesProvider>
 	);
-}
+};
 
 export default App;

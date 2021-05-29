@@ -86,7 +86,7 @@ def api_login():
         hashed_password = hash_password(p)
         if user.password == hashed_password:
             access_token = create_access_token(identity=u)
-            response = make_response(jsonify({"token": access_token}))
+            response = make_response(jsonify({"token": access_token,"username":u}))
             set_access_cookies(response, access_token)
             return response, 200
 
@@ -108,8 +108,8 @@ def api_registration():
 
 
 
+# @jwt_required()
 @app.route('/api/v1/transactions/create', methods=['POST'])
-@jwt_required()
 def api_transactions_create():
     if request.is_json:
         account_id = request.json.get('account_id', None)
@@ -123,11 +123,11 @@ def api_transactions_create():
                     transaction_status = request.json.get("transaction_status", None),
                     person = request.json.get("person", None),
                     recipient = request.json.get("recipient", None),
-                    transaction_date = str(date.today()),
+                    transaction_date = request.json.get("transaction_date", None),
                     cyclic_period = request.json.get("cyclic_period", None)
                     ).save()
-        acc = Account.objects(id=account_id).first()
-        acc.update(balance=(acc.balance+amount))
+        # acc = Account.objects(id=account_id).first()
+        # acc.update(balance=(acc.balance+amount))
         return jsonify({"success": True}), 200
     return jsonify({"success": False}), 400
 
