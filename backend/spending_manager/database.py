@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 from flask import make_response
 import os, json, bson
 
-from spending_manager.models import TransactionType
+from spending_manager.models import TransactionType, User
 from spending_manager import app
 from datetime import datetime, timedelta, timezone
 
@@ -67,8 +67,8 @@ class SpendingManagerDB:
         result = [doc for doc in self.transaction_records.find({'account_id': account_id})]
         if result is None:
             return None
-		else:
-			return list(result)
+        else:
+            return list(result)
 
     def get_account(self, username):
         result = self.account_records.find({"user_name": username})
