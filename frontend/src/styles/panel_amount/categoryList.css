@@ -1,0 +1,15 @@
+.category-list{
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    height: 100%;
+    /* margin:20px; */
+    justify-content: flex-end;
+}
+.category-list .category-content{
+    flex-grow:1;
+}
+.category-list .category-pagination{
+    align-self:center;
+}

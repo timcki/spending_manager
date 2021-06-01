@@ -40,14 +40,15 @@ const messages = {
     amount:"Kwota musi być większa od zera"
 }
 
-const FormTransactions = ()=>{
+const FormTransactions = ({p_amount=0, p_date=new Date(), p_selectCategory = '',p_selectType='',p_description=''})=>{
 
     const {user,getToken} = useContext(AppContext);
-    const [date,setDate] = useState(new Date());
-    const [selectCategory,setSelectCategory] = useState('');
-    const [selectType,setSelectType] = useState('');
-    const [description,setDescription] = useState('');
-    const [amount,setAmount]=useState(0);
+
+    const [date,setDate] = useState(p_date);
+    const [selectCategory,setSelectCategory] = useState(p_selectCategory);
+    const [selectType,setSelectType] = useState(p_selectType);
+    const [description,setDescription] = useState(p_description);
+    const [amount,setAmount]=useState(p_amount);
 
     const [isOpenCalculator,setIsOpenCalculator] = useState(false); 
 
@@ -114,6 +115,8 @@ const FormTransactions = ()=>{
             openCalculator:errOpenCalculator
         });
     }
+    const headers= {"Content-Type": "application/json"}
+
     const handleSubmit=(e)=>{
         e.preventDefault();
         let {correct,...valid} = validationFun();
@@ -121,8 +124,9 @@ const FormTransactions = ()=>{
         const payload={
             account_id:user,
             amount:amount,
-            transaction_type:selectType.value,
-            category_id:1,
+            // transaction_type:selectType.value,
+            transaction_type:"1",
+            category_id:"1",
             transaction_date:date,
             recipient:description
         }
@@ -130,13 +134,13 @@ const FormTransactions = ()=>{
             api
 			.post(
                 'api/v1/transactions/create', 
-                payload
-                ,{
-                    headers:{
-                        // "Authorization":"Bearer "+getToken(),
-                        "Content-Type":"application/json"
-                    }
-                }    
+                payload,headers
+                // ,{
+                //     headers:{
+                //         // "Authorization":"Bearer "+getToken(),
+                //         "Content-Type":"application/json"
+                //     }
+                // }    
             )
 			.then(response => {
 				if (response.status === 200) {

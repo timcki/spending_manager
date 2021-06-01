@@ -199,10 +199,11 @@ def api_accounts_create():
 
         name = request.json.get("acc_name", None)
         balance = request.json.get("acc_balance", None)
-        username = get_jwt_identity()
-        user = User.objects(username=username).first()
+        user = request.json.get("user", None)
+        # username = get_jwt_identity()
+        # user = User.objects(username=username).first()
 
-        if Account.objects(user_id=user.id) is None:
-            Account(user_id=user.id, name=name, balance=balance).save()
-            return jsonify({"message": "Poprawnie dodano konto"}), 200
+        # if Account.objects(user_id=user.id) is None:
+        Account(user_id=user, name=name, balance=balance).save()
+        return jsonify({"message": "Poprawnie dodano konto"}), 200
     return jsonify({"success": False, "mssg": "Brak danych"}), 400

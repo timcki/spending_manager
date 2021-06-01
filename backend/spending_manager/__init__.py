@@ -28,7 +28,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 
 jwt = JWTManager(app)
 db = MongoEngine(app)
-cors = CORS(app)
+cors = CORS(app, supports_credentials=True)
 blocklisted = {}
 # jwt._set_error_handler_callbacks(app)
 

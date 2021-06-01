@@ -1,0 +1,22 @@
+.category-card-wrapper{
+    display: flex;
+    justify-content: center;
+}
+.category-card-wrapper .category-card{
+    display: flex;
+    width:30%;
+    background-color: rgba(238, 213, 75, 0.76);
+    justify-content: space-between;
+    align-items: center;
+    padding:5px 20px;
+    margin:5px 0;
+    border-radius: 10px;
+}
+.category-card-wrapper .category-card .category-name{
+    margin-right:50px;
+}
+.category-card-wrapper .category-card .delete-icon{
+    color: red;
+    height:30px;
+    width:30px;
+}

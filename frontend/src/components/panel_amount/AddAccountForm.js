@@ -1,8 +1,8 @@
 import React,{useContext, useState} from 'react';
-import InputNormal from '../components/InputNormal';
+import InputNormal from '../InputNormal';
 import axios from 'axios'
-import api from '../utils/api';
-import {AppContext} from "../store/AppContext";
+import api from '../../utils/api';
+import {AppContext} from "../../store/AppContext";
 
 const dataAccount ={
     accountName:{
@@ -79,7 +79,7 @@ const AddAccountForm = ()=>{
         if(correct){
         
             const payload={
-                // username:user,
+                user:user,
                 acc_name:accountName,
                 acc_balance:accountState
             }
@@ -90,9 +90,11 @@ const AddAccountForm = ()=>{
                 payload,
                 {
                     headers:{
-                        // "Authorization":`Bearer ${getToken()}`,
+                        // "Authorization":`JWT ${getToken()}`,
+                        // "Authorization":`Bearer${getToken()}`,
+                        "Authorization":`Bearer ${getToken()}`,
                         // "access_token_cookie":`JWT ${getToken()}`,
-                        // 'X-CSRF-TOKEN':`${getCsrfToken()}`,
+                        'X-CSRF-TOKEN':`${getCsrfToken()}`,
                         // 'X-CSRFToken':`${getCsrfToken()}`,
                         "Content-Type":"application/json"
                     }
@@ -100,7 +102,7 @@ const AddAccountForm = ()=>{
             )
 			.then(response => {
                 console.log(response)
-				if (response.data.status === 200) {
+				if (response.status === 200) {
                     console.log(response);
 				}
 			})

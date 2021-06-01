@@ -1,31 +1,30 @@
 import React,{useState,useEffect} from 'react';
-import api from '../utils/api';
+// import api from '../utils/api';
 import axios from 'axios'
-// import Paginate from '../components/Paginate'
-import TransactionsList from '../components/TransactionsList';
+import CategoryList from './CategoryList';
 
 
-const History = ()=>{
-    const [transactions,setTransactions] = useState([]);
+const Category = ()=>{
+    const [category,setCategory] = useState([]);
     const [loading,setLoading] = useState(false);
     const [page,setPage] = useState(1);
     const [amountOnPage,setAmountOnPage] = useState(10);
 
     useEffect(() =>{
-        const fetchTransactions = async ()=>{
+        const fetchCategory = async ()=>{
             setLoading(true);
             const res = await axios.get('http://localhost:3006/transactions');
-            setTransactions(res.data)
+            setCategory(res.data)
             console.log(res.data)
             setLoading(false)
         }
 
-        fetchTransactions();
+        fetchCategory();
     },[]);
     
-    const lastTransaction =page * amountOnPage;
-    const firstTransaction =lastTransaction-amountOnPage;
-    const actualTransactions = transactions.slice(firstTransaction,lastTransaction);
+    const lastCategory =page * amountOnPage;
+    const firstCategory =lastCategory-amountOnPage;
+    const actualCategory = category.slice(firstCategory,lastCategory);
     
     const handleClickChangePage = (number)=>{
         setPage(number);
@@ -33,11 +32,10 @@ const History = ()=>{
 
     return(
         <>
-        <div>History</div>
-        <TransactionsList 
-            data={actualTransactions} 
+        <CategoryList 
+            data={actualCategory} 
             loading={loading} amountOnPage={amountOnPage} 
-            totalAmount={transactions.length}
+            totalAmount={category.length}
             onclick = {handleClickChangePage} 
             page={page}
             />
@@ -47,4 +45,4 @@ const History = ()=>{
     )
 }
 
-export default History;
+export default Category;
