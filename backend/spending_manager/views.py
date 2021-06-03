@@ -136,7 +136,7 @@ def api_transactions_create():
                     transaction_date=transaction_date,
                     cyclic_period=request.json.get("cyclic_period", None)
                     ).save()
-        update_balance_on_insert(account_id, transaction_type, amount, other_account_id, transaction_date)
+        update_balance_on_insert(account_id, transaction_type, amount, other_account_id, transaction_status)
         return jsonify({"success": True}), 200
     return jsonify({"success": False}), 400
 
@@ -238,7 +238,6 @@ def update_balance_on_insert(account_id, transaction_type, amount, other_account
         account.update(balance=new_balance)
 
 
-
 def get_transaction_data(transaction):
     amount = transaction.amount
     account_id = transaction.account_id
@@ -314,8 +313,3 @@ def handle_forthcoming_transactions(user_id):
                                     ).save()
                         update_balance_on_insert(account_id, transaction.transaction_type, transaction.amount,
                                                  transaction.other_account_id, transaction_date)
-
-
-
-
-
