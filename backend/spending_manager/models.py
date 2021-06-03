@@ -10,6 +10,7 @@ class TransactionType(IntEnum):
     LENT = 4
     BORROWED = 5
 
+
 class User(db.Document):
     username = db.StringField()
     password = db.StringField()
@@ -27,19 +28,20 @@ class Transaction(db.Document):
     # recipient = db.StringField()
     # transaction_date = db.DateTimeField()
     # cyclic_period = db.BooleanField()
-    account_id = db.StringField()
-    amount = db.StringField()
+    account_id = db.ObjectIdField()
+    amount = db.FloatField()
     category_id = db.StringField()
-    transaction_type = db.StringField()
-    other_account_id = db.StringField()
+    transaction_type = db.IntField()
+    other_account_id = db.ObjectIdField()
     transaction_status = db.StringField()
     person = db.StringField()
     recipient = db.StringField()
-    transaction_date = db.StringField()
+    transaction_date = db.DateTimeField()
     cyclic_period = db.StringField()
+
 
 class Account(db.Document):
     user_id = db.ObjectIdField()
     name = db.StringField()
-    balance = db.StringField()
+    balance = db.FloatField()
     # balance = db.FloatField()
