@@ -79,35 +79,39 @@ const AddAccountForm = ()=>{
         if(correct){
         
             const payload={
-                user:user,
                 acc_name:accountName,
                 acc_balance:accountState
             }
-        
-            api
-			.post(
-                'api/v1/accounts/create', 
-                payload,
-                {
-                    headers:{
-                        // "Authorization":`JWT ${getToken()}`,
-                        // "Authorization":`Bearer${getToken()}`,
-                        "Authorization":`Bearer ${getToken()}`,
-                        // "access_token_cookie":`JWT ${getToken()}`,
-                        'X-CSRF-TOKEN':`${getCsrfToken()}`,
-                        // 'X-CSRFToken':`${getCsrfToken()}`,
-                        "Content-Type":"application/json"
-                    }
-                }
-            )
-			.then(response => {
-                console.log(response)
-				if (response.status === 200) {
-                    console.log(response);
-				}
-			})
-            .catch(err => {});
-                
+            console.log(payload)
+            console.log("token\n")
+            console.log(getToken())
+            // api
+			// .post(
+            //     '/api/v1/accounts/create', 
+            //     payload,
+            //     {
+            //         headers:{
+            //             "Authorization":`Bearer ${getToken()}`,
+            //             'X-CSRF-TOKEN':`${getCsrfToken()}`,
+            //             "Content-Type":"application/json"
+            //         }
+            //     }
+            // )
+			// .then(response => {
+            //     console.log(response)
+			// 	if (response.status === 200) {
+            //         console.log(response);
+			// 	}
+			// })
+            // .catch(err => {});
+            fetch('http://127.0.0.1:5000/api/v1/accounts/create',{
+                method: "POST",
+                mode: "no-cors",
+                headers: {"Content-Type": "application/json", 'X-CSRF-TOKEN': getCsrfToken()},
+                body: JSON.stringify(payload)
+            }).then((response)=>{
+                    console.log("ok")
+            }).catch(err => {});
                 
             setAccountName('');
             setAccountState(0);

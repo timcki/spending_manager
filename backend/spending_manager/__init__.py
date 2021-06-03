@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,logging
 from flask_jwt_extended import JWTManager
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS
@@ -29,6 +29,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 jwt = JWTManager(app)
 db = MongoEngine(app)
 cors = CORS(app, supports_credentials=True)
+logging.getLogger('flask_cors').level = logging.DEBUG
 blocklisted = {}
 # jwt._set_error_handler_callbacks(app)
 

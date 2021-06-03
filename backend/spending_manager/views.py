@@ -108,7 +108,7 @@ def api_registration():
 
 
 
-# @jwt_required()
+@jwt_required()
 @app.route('/api/v1/transactions/create', methods=['POST'])
 def api_transactions_create():
     if request.is_json:
@@ -199,11 +199,10 @@ def api_accounts_create():
 
         name = request.json.get("acc_name", None)
         balance = request.json.get("acc_balance", None)
-        user = request.json.get("user", None)
-        # username = get_jwt_identity()
-        # user = User.objects(username=username).first()
+        username = get_jwt_identity()
+        user = User.objects(username=username).first()
 
-        # if Account.objects(user_id=user.id) is None:
-        Account(user_id=user, name=name, balance=balance).save()
-        return jsonify({"message": "Poprawnie dodano konto"}), 200
+        if Account.objects(user_id=user.id) is None:
+            Account(user_id=user.id, name=name, balance=balance).save()
+            return jsonify({"message": "Poprawnie dodano konto"}), 200
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
