@@ -73,9 +73,10 @@ def logout():
 
 
 @app.route('/new_acc')
-#@jwt_required()
+# @jwt_required()
 def account_new_acc():
     return render_template('account_new_acc.html')
+
 
 @app.route('/api/v1/login', methods=['POST'])
 def api_login():
@@ -84,7 +85,7 @@ def api_login():
         p = request.json.get("password", None)
 
         user = User.objects(username=u).first()
-        #print(user.to_json())
+        # print(user.to_json())
 
         hashed_password = hash_password(p)
         if user.password == hashed_password:
@@ -140,7 +141,7 @@ def api_transactions_create():
     return jsonify({"success": False}), 400
 
 
-@app.route('/api/v1/transactions/get', methods=['POST','GET'])
+@app.route('/api/v1/transactions/get', methods=['POST', 'GET'])
 @jwt_required()
 def api_transactions_get():
     if request.is_json:
@@ -161,10 +162,10 @@ def api_transactions_update():
         value = request.json.get("value", None)
 
         tx = Transaction.objects(id=transaction_id).first()
+        before_update_data = get_transaction_data(tx)
         tx.update(attribute=attribute, value=value)
-
-        acc = Account.objects(id=tx.account_id).first()
-        acc.update(balance=(acc.balance+value))
+        after_update_data = get_transaction_data(tx)
+        update_balance_on_update(before_update_data, after_update_data)
         return jsonify({"success": True}), 200
 
     return jsonify({"success": True}), 400
@@ -176,7 +177,9 @@ def api_transactions_delete():
     if request.is_json:
         transaction_id = request.json.get("transaction_id", None)
         tx = Transaction.objects(id=transaction_id).first()
+        before_delete_data = get_transaction_data(tx)
         tx.delete()
+        update_balance_on_delete(before_delete_data)
     return jsonify({}), 200
 
 
