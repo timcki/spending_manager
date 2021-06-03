@@ -1,12 +1,14 @@
-from spending_manager import app, jwt
+from spending_manager import app, jwt, blocklisted
 from spending_manager.models import User, Transaction, Account
 
 from flask import render_template, jsonify, request, redirect, make_response
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, set_access_cookies, get_jwt
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, set_access_cookies, get_jwt, \
+    decode_token
 from datetime import datetime, timedelta, timezone, date
 
 import json
 import hashlib
+
 
 def hash_password(password):
     s = hashlib.sha3_224()
@@ -27,52 +29,51 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
-
-
-
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
-    return app.blocklisted[jti] is not None
+    return jti in blocklisted
 
 
-@jwt.expired_token_loader
-@jwt.revoked_token_loader
-def my_expired_token_callback(jwt_header, jwt_payload):
-    return redirect('/login')
+# @jwt.expired_token_loader
+# @jwt.revoked_token_loader
+# def my_expired_token_callback(jwt_header, jwt_payload):
+#     return redirect('/login')
 
+#
+# @app.route('/')
+# def hello_world():
+#     return render_template('index.html')
+#
+#
+# @app.route('/login')
+# def account_login():
+#     return render_template('account_login.html')
+#
+#
+# @app.route('/register')
+# def account_register():
+#     return render_template('account_register.html')
+#
+#
+# @app.route('/db_test')
+# def database_route_test():
+#     return render_template('db_test.html')
 
-@app.route('/')
-def hello_world():
-    return render_template('index.html')
-
-
-@app.route('/login')
-def account_login():
-    return render_template('account_login.html')
-
-
-@app.route('/register')
-def account_register():
-    return render_template('account_register.html')
-
-
-@app.route('/db_test')
-def database_route_test():
-    return render_template('db_test.html')
 
 @app.route("/logout")
 @jwt_required(optional=True)
 def logout():
     jti = get_jwt()["jti"]
-    app.blocklisted[jti] = datetime.now(timezone.utc)
+    blocklisted[jti] = datetime.now(timezone.utc)
     return redirect('/login')
 
 
 @app.route('/new_acc')
-#@jwt_required()
+# @jwt_required()
 def account_new_acc():
     return render_template('account_new_acc.html')
+
 
 @app.route('/api/v1/login', methods=['POST'])
 def api_login():
@@ -81,12 +82,12 @@ def api_login():
         p = request.json.get("password", None)
 
         user = User.objects(username=u).first()
-        #print(user.to_json())
+        # print(user.to_json())
 
         hashed_password = hash_password(p)
         if user.password == hashed_password:
             access_token = create_access_token(identity=u)
-            response = make_response(jsonify({"token": access_token,"username":u}))
+            response = make_response(jsonify({"token": access_token, "username": u}))
             set_access_cookies(response, access_token)
             return response, 200
 
@@ -107,7 +108,6 @@ def api_registration():
     return jsonify({"success": False}), 400
 
 
-
 @jwt_required()
 @app.route('/api/v1/transactions/create', methods=['POST'])
 def api_transactions_create():
@@ -117,14 +117,14 @@ def api_transactions_create():
         # TODO: Transaction(**request.json).save()
         Transaction(account_id=account_id,
                     amount=amount,
-                    category_id = request.json.get("category_id", None),
-                    transaction_type = request.json.get("transaction_type", None),
-                    other_account_id = request.json.get("other_account_id", None),
-                    transaction_status = request.json.get("transaction_status", None),
-                    person = request.json.get("person", None),
-                    recipient = request.json.get("recipient", None),
-                    transaction_date = request.json.get("transaction_date", None),
-                    cyclic_period = request.json.get("cyclic_period", None)
+                    category_id=request.json.get("category_id", None),
+                    transaction_type=request.json.get("transaction_type", None),
+                    other_account_id=request.json.get("other_account_id", None),
+                    transaction_status=request.json.get("transaction_status", None),
+                    person=request.json.get("person", None),
+                    recipient=request.json.get("recipient", None),
+                    transaction_date=request.json.get("transaction_date", None),
+                    cyclic_period=request.json.get("cyclic_period", None)
                     ).save()
         # acc = Account.objects(id=account_id).first()
         # acc.update(balance=(acc.balance+amount))
@@ -132,7 +132,7 @@ def api_transactions_create():
     return jsonify({"success": False}), 400
 
 
-@app.route('/api/v1/transactions/get', methods=['POST','GET'])
+@app.route('/api/v1/transactions/get', methods=['POST', 'GET'])
 @jwt_required()
 def api_transactions_get():
     if request.is_json:
@@ -144,7 +144,7 @@ def api_transactions_get():
     return jsonify({"success": False}), 404
 
 
-@app.route('/api/v1/transactions/update', methods=['POST'])  # moze lepsze bedzie tutaj PUT?
+@app.route('/api/v1/transactions/update', methods=['POST'])
 @jwt_required()
 def api_transactions_update():
     if request.is_json:
@@ -156,7 +156,7 @@ def api_transactions_update():
         tx.update(attribute=attribute, value=value)
 
         acc = Account.objects(id=tx.account_id).first()
-        acc.update(balance=(acc.balance+value))
+        acc.update(balance=(acc.balance + value))
         return jsonify({"success": True}), 200
 
     return jsonify({"success": True}), 400
@@ -202,7 +202,29 @@ def api_accounts_create():
         username = get_jwt_identity()
         user = User.objects(username=username).first()
 
-        if Account.objects(user_id=user.id) is None:
+        if Account.objects(user_id=user.id, name=name).first() is None:
             Account(user_id=user.id, name=name, balance=balance).save()
             return jsonify({"message": "Poprawnie dodano konto"}), 200
+        return jsonify({"message": "Konto o podanej nazwie już istnieje"}), 400
+    return jsonify({"success": False, "mssg": "Brak danych"}), 400
+
+
+@app.route('/api/v1/accounts/update', methods=['PUT'])
+@jwt_required()
+def api_accounts_update():
+    if request.is_json:
+        name = request.json.get("acc_name", None)
+        new_name = request.json.get("new_acc_name", None)
+        new_balance = request.json.get("new_acc_balance", None)
+        username = get_jwt_identity()
+        user = User.objects(username=username).first()
+
+        account = Account.objects(user_id=user.id, name=name).first()
+        if new_balance or new_name:
+            if new_balance:
+                account.update_one(balance=new_balance)
+            if new_name:
+                account.update_one(name=new_name)
+            return jsonify({"message": "Poprawnie edytowano konto"}), 200
+        return jsonify({"message": "Blad podczas edycji danych"}), 400
     return jsonify({"success": False, "mssg": "Brak danych"}), 400

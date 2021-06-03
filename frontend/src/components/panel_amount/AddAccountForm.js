@@ -4,6 +4,13 @@ import axios from 'axios'
 import api from '../../utils/api';
 import {AppContext} from "../../store/AppContext";
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+
 const dataAccount ={
     accountName:{
         name:"accountName",
@@ -85,33 +92,30 @@ const AddAccountForm = ()=>{
             console.log(payload)
             console.log("token\n")
             console.log(getToken())
-            // api
-			// .post(
-            //     '/api/v1/accounts/create', 
-            //     payload,
-            //     {
-            //         headers:{
-            //             "Authorization":`Bearer ${getToken()}`,
-            //             'X-CSRF-TOKEN':`${getCsrfToken()}`,
-            //             "Content-Type":"application/json"
-            //         }
-            //     }
-            // )
-			// .then(response => {
-            //     console.log(response)
-			// 	if (response.status === 200) {
-            //         console.log(response);
-			// 	}
-			// })
-            // .catch(err => {});
-            fetch('http://127.0.0.1:5000/api/v1/accounts/create',{
-                method: "POST",
-                mode: "no-cors",
-                headers: {"Content-Type": "application/json", 'X-CSRF-TOKEN': getCsrfToken()},
-                body: JSON.stringify(payload)
-            }).then((response)=>{
-                    console.log("ok")
-            }).catch(err => {});
+            api
+			.post(
+                '/api/v1/accounts/create',
+                payload,
+                {
+                    headers:{
+                        // "Authorization":`Bearer ${getToken()}`,
+                        'X-CSRF-TOKEN':`${getCookie('csrf_access_token')}`,
+                        "Content-Type":"application/json"
+                    }
+                }
+            )
+			.then(response => {
+                console.log(response)
+			})
+            .catch(err => {});
+            // fetch('http://127.0.0.1:5000/api/v1/accounts/create',{
+            //     method: "POST",
+            //     credentials: "include",
+            //     headers: {'X-CSRF-TOKEN': getCookie('csrf_access_token')},
+            //     body: JSON.stringify(payload)
+            // }).then((response)=>{
+            //         console.log(response)
+            // }).catch(err => {});
                 
             setAccountName('');
             setAccountState(0);

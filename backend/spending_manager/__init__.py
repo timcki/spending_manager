@@ -1,4 +1,4 @@
-from flask import Flask,logging
+from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS
@@ -19,7 +19,7 @@ app.config['MONGODB_SETTINGS'] = {
     'authentication_source': 'admin'
 }
 
-app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_SECRET_KEY"] = "super-secret"
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=1)
@@ -29,7 +29,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 jwt = JWTManager(app)
 db = MongoEngine(app)
 cors = CORS(app, supports_credentials=True)
-logging.getLogger('flask_cors').level = logging.DEBUG
+
 blocklisted = {}
 # jwt._set_error_handler_callbacks(app)
 
