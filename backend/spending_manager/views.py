@@ -1,5 +1,5 @@
 from spending_manager import app, jwt, blocklisted
-from spending_manager.models import User, Transaction, Account, TransactionType
+from spending_manager.models import User, Transaction, Account, TransactionType, Category
 
 from flask import render_template, jsonify, request, redirect, make_response
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, set_access_cookies, get_jwt, \
@@ -183,13 +183,27 @@ def api_transactions_delete():
 
 
 @app.route('/api/v1/categories/get', methods=['GET'])
+@jwt_required()
 def api_categories_get():
-    return jsonify({}), 200
+    username = get_jwt_identity()
+    user = User.objects(username=username).first()
+    users_categories = list(Category.objects(user_id=user.id))
+    default_categories = list(Category.objects(is_default=True))
+    result = users_categories+default_categories
+    return jsonify(result), 200
 
 
 @app.route('/api/v1/categories/create', methods=['POST'])
+@jwt_required()
 def api_categories_create():
-    return jsonify({}), 200
+    if request.is_json:
+        username = get_jwt_identity()
+        user = User.objects(username=username).first()
+        name = request.json.get("name", None)
+        icon_colour = request.json.get("icon_colour", None)
+        Category(user_id=user.id, name=name, icon_colour=icon_colour, is_default=False).save()
+        return jsonify({"message": "Poprawnie dodano kategorie"}), 200
+    return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 
 @app.route('/api/v1/accounts/get', methods=['GET'])

@@ -32,3 +32,9 @@ class Account(db.Document):
     user_id = db.ObjectIdField()
     name = db.StringField()
     balance = db.FloatField()
+
+class Category(db.Document):
+    user_id = db.ObjectIdField()
+    name = db.StringField()
+    icon_colour = db.StringField()
+    is_default = db.BooleanField()
