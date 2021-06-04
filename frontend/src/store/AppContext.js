@@ -37,7 +37,8 @@ const AppProvider = ({children}) => {
                 // localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', response.data.username);
                 setCookie('token',response.data.token);
-                setUser(response.data.username)
+                setUser(response.data.username);
+                setCurrentAccount(response.data.account);
                 console.log(response)
                 history.push('/transactions')
                 return true

@@ -86,11 +86,11 @@ def api_login():
 
         user = User.objects(username=u).first()
         # print(user.to_json())
-
+        account = user.main_account_id
         hashed_password = hash_password(p)
         if user.password == hashed_password:
             access_token = create_access_token(identity=u)
-            response = make_response(jsonify({"token": access_token, "username": u}))
+            response = make_response(jsonify({"token": access_token, "username": u,"account":account}))
             set_access_cookies(response, access_token)
             return response, 200
 
@@ -214,6 +214,15 @@ def api_accounts_get():
 
     users_accounts = Account.objects(user_id=user.id)
     return jsonify(users_accounts), 200
+
+@app.route('/api/v1/main_account/get', methods=['GET'])
+@jwt_required()
+def api_main_account_get():
+    username = get_jwt_identity()
+    user = User.objects(username=username).first()
+
+    user_account = Account.objects(user_id=user.id).first()
+    return jsonify(user_account), 200
 
 
 @app.route('/api/v1/accounts/create', methods=['POST'])
