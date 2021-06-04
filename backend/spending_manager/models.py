@@ -33,6 +33,7 @@ class Account(db.Document):
     name = db.StringField()
     balance = db.FloatField()
 
+
 class Category(db.Document):
     user_id = db.ObjectIdField()
     name = db.StringField()
