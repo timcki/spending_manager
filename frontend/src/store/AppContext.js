@@ -94,7 +94,10 @@ const AppProvider = ({children}) => {
         logout,
         isLogin,
         getToken,
-        getCsrfToken
+        getCsrfToken,
+        currentAccount,
+        setCurrentAccount
+        
     }
 
 

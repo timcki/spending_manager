@@ -86,11 +86,12 @@ def api_login():
 
         user = User.objects(username=u).first()
         # print(user.to_json())
-        account = user.main_account_id
+        # account_id = user.main_account_id
+        # account = Account.objects(id=account_id).first()
         hashed_password = hash_password(p)
         if user.password == hashed_password:
             access_token = create_access_token(identity=u)
-            response = make_response(jsonify({"token": access_token, "username": u,"account":account}))
+            response = make_response(jsonify({"token": access_token, "username": u}))
             set_access_cookies(response, access_token)
             return response, 200
 
@@ -115,8 +116,8 @@ def api_registration():
 @app.route('/api/v1/transactions/create', methods=['POST'])
 def api_transactions_create():
     if request.is_json:
-        #account_id = request.json.get('account_id', None)
-        account_id = ObjectId("60b68dc85acd604ff41edfac") #account_id for already added account
+        account_id = request.json.get('account_id', None)
+        # account_id = ObjectId("60b68dc85acd604ff41edfac") #account_id for already added account
         amount = float(request.json.get("amount", None))
         transaction_type = int(request.json.get("transaction_type", None))
         transaction_date = dateutil.parser.parse(request.json.get("transaction_date", None))
@@ -145,6 +146,7 @@ def api_transactions_create():
 def api_transactions_get():
     if request.is_json:
         account_id = request.json.get("account_id", None)
+        # account_id = request.args.get("account_id", None)
         tx = Transaction.objects(account_id=account_id).first()
         if tx is not None:
             return jsonify(tx.to_json()), 200
@@ -221,7 +223,7 @@ def api_main_account_get():
     username = get_jwt_identity()
     user = User.objects(username=username).first()
 
-    user_account = Account.objects(user_id=user.id).first()
+    user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
     return jsonify(user_account), 200
 
 

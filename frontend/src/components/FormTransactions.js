@@ -42,7 +42,7 @@ const messages = {
 
 const FormTransactions = ({p_amount=0, p_date=new Date(), p_selectCategory = '',p_selectType='',p_description=''})=>{
 
-    const {user,getToken} = useContext(AppContext);
+    const {user,getToken,currentAccount} = useContext(AppContext);
 
     const [date,setDate] = useState(p_date);
     const [selectCategory,setSelectCategory] = useState(p_selectCategory);
@@ -122,7 +122,7 @@ const FormTransactions = ({p_amount=0, p_date=new Date(), p_selectCategory = '',
         let {correct,...valid} = validationFun();
 
         const payload={
-            account_id:user,
+            account_id:currentAccount,
             amount:amount,
             transaction_type:selectType.value,
             //transaction_type:"1",

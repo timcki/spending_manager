@@ -1,8 +1,9 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import api from '../utils/api';
 import axios from 'axios'
 // import Paginate from '../components/Paginate'
 import TransactionsList from '../components/TransactionsList';
+import {AppContext} from "../store/AppContext";
 
 
 const History = ()=>{
@@ -11,10 +12,23 @@ const History = ()=>{
     const [page,setPage] = useState(1);
     const [amountOnPage,setAmountOnPage] = useState(10);
 
+    const {getCsrfToken,getToken,currentAccount} = useContext(AppContext);
+
+
     useEffect(() =>{
         const fetchTransactions = async ()=>{
             setLoading(true);
-            const res = await axios.get('http://localhost:3006/transactions');
+            console.log(currentAccount);
+            // const res = await api.get(`/api/v1/transactions/gets?account_id=${currentAccount}`,
+            const res = await api.get(`/api/v1/transactions/get`,
+            {
+                headers:{
+                    "Authorization":`Bearer ${getToken()}`,
+                    'X-CSRF-TOKEN':`${getCsrfToken()}`,
+                    "Content-Type":"application/json"
+                }
+            });
+            // const res = await axios.get('http://localhost:3006/transactions');
             setTransactions(res.data)
             console.log(res.data)
             setLoading(false)
