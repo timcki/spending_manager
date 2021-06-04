@@ -1,5 +1,4 @@
 from spending_manager import db
-from flask_mongoengine import MongoEngine
 from enum import IntEnum
 
 
@@ -17,17 +16,6 @@ class User(db.Document):
 
 
 class Transaction(db.Document):
-    # TODO: Switch all ID fields to proper datatype db.ObjectIdField
-    # account_id = db.IntField()
-    # amount = db.FloatField()
-    # category_id = db.IntField()
-    # transaction_type = db.StringField()
-    # other_account_id = db.IntField()
-    # transaction_status = db.StringField()
-    # person = db.IntField()
-    # recipient = db.StringField()
-    # transaction_date = db.DateTimeField()
-    # cyclic_period = db.BooleanField()
     account_id = db.ObjectIdField()
     amount = db.FloatField()
     category_id = db.StringField()
@@ -44,4 +32,3 @@ class Account(db.Document):
     user_id = db.ObjectIdField()
     name = db.StringField()
     balance = db.FloatField()
-    # balance = db.FloatField()
