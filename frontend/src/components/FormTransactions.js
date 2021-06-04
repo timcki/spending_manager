@@ -124,8 +124,8 @@ const FormTransactions = ({p_amount=0, p_date=new Date(), p_selectCategory = '',
         const payload={
             account_id:user,
             amount:amount,
-            // transaction_type:selectType.value,
-            transaction_type:"1",
+            transaction_type:selectType.value,
+            //transaction_type:"1",
             category_id:"1",
             transaction_date:date,
             recipient:description
