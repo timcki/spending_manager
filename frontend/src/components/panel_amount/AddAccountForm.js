@@ -4,12 +4,6 @@ import axios from 'axios'
 import api from '../../utils/api';
 import {AppContext} from "../../store/AppContext";
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
 
 const dataAccount ={
     accountName:{
@@ -99,7 +93,7 @@ const AddAccountForm = ()=>{
                 {
                     headers:{
                         // "Authorization":`Bearer ${getToken()}`,
-                        'X-CSRF-TOKEN':`${getCookie('csrf_access_token')}`,
+                        'X-CSRF-TOKEN':`${getCsrfToken()}`,
                         "Content-Type":"application/json"
                     }
                 }
