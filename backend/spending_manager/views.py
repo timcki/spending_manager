@@ -116,7 +116,7 @@ def api_registration():
 def api_transactions_create():
     if request.is_json:
         #account_id = request.json.get('account_id', None)
-        account_id = ObjectId("60b68dc85acd604ff41edfac")
+        account_id = ObjectId("60b68dc85acd604ff41edfac") #account_id for already added account
         amount = float(request.json.get("amount", None))
         transaction_type = int(request.json.get("transaction_type", None))
         transaction_date = dateutil.parser.parse(request.json.get("transaction_date", None))
