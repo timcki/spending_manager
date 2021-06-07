@@ -103,10 +103,11 @@ def api_registration():
     if request.is_json:
         u = request.json.get("username", None)
         p = request.json.get("password", None)
+        m = request.json.get("main_account_id", None)
         user = User.objects(username=u).first()
         if user is None:
             hashed_password = hash_password(p)
-            User(username=u, password=hashed_password).save()
+            User(username=u, password=hashed_password, main_account_id=m).save()
             return jsonify({"success": True}), 200
 
     return jsonify({"success": False}), 400
@@ -137,21 +138,30 @@ def api_transactions_create():
                     cyclic_period=request.json.get("cyclic_period", None)
                     ).save()
         update_balance_on_insert(account_id, transaction_type, amount, other_account_id, transaction_status)
-        return jsonify({"success": True}), 200
+        account_data = Account.objects(id=account_id).first()
+        return jsonify(account_data), 200
     return jsonify({"success": False}), 400
 
 
-@app.route('/api/v1/transactions/get', methods=['POST', 'GET'])
+@app.route('/api/v1/transactions/get', methods=['GET'])
 @jwt_required()
 def api_transactions_get():
-    if request.is_json:
-        account_id = request.json.get("account_id", None)
-        # account_id = request.args.get("account_id", None)
-        tx = Transaction.objects(account_id=account_id).first()
-        if tx is not None:
-            return jsonify(tx.to_json()), 200
+    username = get_jwt_identity()
+    user = User.objects(username=username).first()
 
-    return jsonify({"success": False}), 404
+    tx = Transaction.objects(account_id=user.main_account_id)
+    return jsonify(tx), 200
+
+@app.route('/api/v1/transaction/get', methods=['GET'])
+@jwt_required()
+def api_transaction_get():
+    # if request.is_json:
+    transaction_id = request.args.get('transaction_id', None)
+    username = get_jwt_identity()
+    user = User.objects(username=username).first()
+
+    tx = Transaction.objects(id=transaction_id)
+    return jsonify(tx), 200
 
 
 @app.route('/api/v1/transactions/update', methods=['POST'])
@@ -159,17 +169,24 @@ def api_transactions_get():
 def api_transactions_update():
     if request.is_json:
         transaction_id = request.json.get("transaction_id", None)
-        attribute = request.json.get("attribute", None)
-        value = request.json.get("value", None)
+        amount = request.json.get("amount", None)
+        transaction_date = request.json.get("transaction_date", None)
+        category_id = request.json.get("category_id", None)
+        transaction_type = request.json.get("transaction_type", None)
+        recipient = request.json.get("recipient", None)
 
         tx = Transaction.objects(id=transaction_id).first()
         before_update_data = get_transaction_data(tx)
-        tx.update(attribute=attribute, value=value)
-        after_update_data = get_transaction_data(tx)
+        tx.update(id=transaction_id, amount=amount,transaction_date=transaction_date, category_id=category_id, transaction_type=transaction_type, recipient=recipient)
+        after_update_data = get_transaction_data(Transaction.objects(id=transaction_id).first())
         update_balance_on_update(before_update_data, after_update_data)
-        return jsonify({"success": True}), 200
+        
+        username = get_jwt_identity()
+        user = User.objects(username=username).first()
+        user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
+        return jsonify(user_account), 200
 
-    return jsonify({"success": True}), 400
+    return jsonify({"success": False}), 400
 
 
 @app.route('/api/v1/transactions/delete', methods=['POST'])
@@ -181,7 +198,11 @@ def api_transactions_delete():
         before_delete_data = get_transaction_data(tx)
         tx.delete()
         update_balance_on_delete(before_delete_data)
-    return jsonify({}), 200
+        username = get_jwt_identity()
+        user = User.objects(username=username).first()
+        user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
+        return jsonify(user_account), 200
+    return jsonify({"success": False}), 400
 
 
 @app.route('/api/v1/categories/get', methods=['GET'])
@@ -222,10 +243,27 @@ def api_accounts_get():
 def api_main_account_get():
     username = get_jwt_identity()
     user = User.objects(username=username).first()
+    if user.main_account_id is None:
+        return jsonify({"message": "Użytkownik nie posiada głównego konta"}), 400
+    else:
+        user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
+        return jsonify(user_account), 200
 
-    user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
-    return jsonify(user_account), 200
+@app.route('/api/v1/main_account/post', methods=['POST'])
+@jwt_required()
+def api_main_account_post():
+    if request.is_json:
+        account_id = request.json.get('account_id', None)
+        username = get_jwt_identity()
+        user = User.objects(username=username).first()
+        if user.main_account_id is account_id:
+            return jsonify({"message": "Wybrano to samo konto"}), 200
+        else:
+            user.update(main_account_id = account_id)
+            user_account = Account.objects(user_id=user.id,id=account_id).first()
 
+            # return jsonify({"message": "Pomyślnie zmieniono konto domyślne"}), 200
+            return jsonify(user_account), 200
 
 @app.route('/api/v1/accounts/create', methods=['POST'])
 @jwt_required()
@@ -238,7 +276,9 @@ def api_accounts_create():
         user = User.objects(username=username).first()
 
         if Account.objects(user_id=user.id, name=name).first() is None:
-            Account(user_id=user.id, name=name, balance=balance).save()
+            default_account = Account(user_id=user.id, name=name, balance=balance).save()
+            if user.main_account_id is None:
+                user.update(main_account_id=default_account.id)
             return jsonify({"message": "Poprawnie dodano konto"}), 200
         return jsonify({"message": "Konto o podanej nazwie już istnieje"}), 400
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
@@ -296,19 +336,20 @@ def get_transaction_data(transaction):
         "transaction_type": transaction_type,
         "amount": amount,
         "other_account_id": other_account_id,
-        "transaction_date": transaction_date
+        "transaction_date": transaction_date,
+        "transaction_status": make_transaction_status(transaction_date)
     }
 
 
 def update_balance_on_update(before_update_data, after_update_data):
     update_balance_on_delete(before_update_data)
     update_balance_on_insert(after_update_data["account_id"], after_update_data["transaction_type"],
-                             after_update_data["amount"], after_update_data["other_account_id"])
+                             after_update_data["amount"], after_update_data["other_account_id"], after_update_data["transaction_status"])
 
 
 def update_balance_on_delete(before_delete_data):
     update_balance_on_insert(before_delete_data["account_id"], before_delete_data["transaction_type"],
-                             -before_delete_data["amount"], before_delete_data["other_account_id"])
+                             -before_delete_data["amount"], before_delete_data["other_account_id"], before_delete_data["transaction_status"])
 
 
 def make_transaction_status(transaction_date):

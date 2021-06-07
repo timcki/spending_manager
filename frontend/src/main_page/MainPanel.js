@@ -4,8 +4,9 @@ import Accounts from '../panels/Accounts';
 import Statistics from '../panels/Statistics';
 import History from '../panels/History';
 import Settings from '../panels/Settings';
+import TransactionUpdate from '../components/TransactionUpdate';
 
-import {Switch,Route} from 'react-router-dom'
+import {Switch,Route} from 'react-router-dom';
 
 const MainPanel = props => {
 	// let panel = null;
@@ -36,6 +37,7 @@ const MainPanel = props => {
 			<Route path="/transactions" component={Transactions} />
 			<Route path="/accounts" component={Accounts} />
 			<Route path="/statistics" component={Statistics} />
+			<Route path="/history/:id" component={TransactionUpdate} />
 			<Route path="/history" component={History} />
 			<Route path="/settings" component={Settings} />
 		  </Switch>

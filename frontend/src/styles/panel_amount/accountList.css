@@ -1,0 +1,15 @@
+.account-list {
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	padding-top: 10px;
+	height: 100%;
+	/* margin:20px; */
+	justify-content: flex-end;
+}
+.account-list .account-content {
+	flex-grow: 1;
+}
+.account-list .account-pagination {
+	align-self: center;
+}

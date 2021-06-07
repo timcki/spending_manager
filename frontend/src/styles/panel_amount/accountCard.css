@@ -1,0 +1,31 @@
+.account-card-wrapper {
+	display: flex;
+	justify-content: center;
+}
+.account-card-wrapper .account-card {
+	display: flex;
+	width: 30%;
+	background-color: rgba(238, 121, 75, 0.76);
+	justify-content: space-between;
+	align-items: center;
+	padding: 5px 20px;
+	margin: 5px 0;
+	border-radius: 10px;
+}
+.account-card-wrapper .account-card .account-name {
+	margin-right: 50px;
+}
+.account-card-wrapper .account-card .check-icon.default {
+	color: rgb(3, 128, 3);
+	cursor: default;
+	opacity: 100%;
+	height: 2.7rem;
+	width: 2.7rem;
+}
+.account-card-wrapper .account-card .check-icon {
+	cursor: pointer;
+	color: grey;
+	opacity: 40%;
+	height: 2.7rem;
+	width: 2.7rem;
+}

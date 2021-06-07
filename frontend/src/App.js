@@ -5,13 +5,11 @@ import { CookiesProvider } from 'react-cookie';
 
 const App = props => {
 	return( 
-		<CookiesProvider>
-			<AppProvider>
-				<div className="App">			
-					<Routes/>
-				</div>
-			</AppProvider>
-		</CookiesProvider>
+		<AppProvider>
+			<div className="App">			
+				<Routes/>
+			</div>
+		</AppProvider>
 	);
 };
 
