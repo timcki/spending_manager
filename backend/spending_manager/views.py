@@ -1,15 +1,13 @@
 from spending_manager import app, jwt, blocklisted
 from spending_manager.models import User, Transaction, Account, TransactionType, Category
 
-from flask import render_template, jsonify, request, redirect, make_response
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, set_access_cookies, get_jwt, \
-    decode_token
-from datetime import datetime, timedelta, timezone, date
+from flask import jsonify, request, redirect, make_response
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, set_access_cookies, get_jwt
+from datetime import datetime, timedelta, timezone
 from bson.objectid import ObjectId
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
 
-import json
 import hashlib
 
 
@@ -38,30 +36,10 @@ def check_if_token_revoked(jwt_header, jwt_payload):
     return jti in blocklisted
 
 
-# @jwt.expired_token_loader
-# @jwt.revoked_token_loader
-# def my_expired_token_callback(jwt_header, jwt_payload):
-#     return redirect('/login')
-
-#
-# @app.route('/')
-# def hello_world():
-#     return render_template('index.html')
-#
-#
-# @app.route('/login')
-# def account_login():
-#     return render_template('account_login.html')
-#
-#
-# @app.route('/register')
-# def account_register():
-#     return render_template('account_register.html')
-#
-#
-# @app.route('/db_test')
-# def database_route_test():
-#     return render_template('db_test.html')
+@jwt.expired_token_loader
+@jwt.revoked_token_loader
+def my_expired_token_callback(jwt_header, jwt_payload):
+    return redirect('/')
 
 
 @app.route("/logout")
@@ -69,13 +47,7 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 def logout():
     jti = get_jwt()["jti"]
     blocklisted[jti] = datetime.now(timezone.utc)
-    return redirect('/login')
-
-
-@app.route('/new_acc')
-# @jwt_required()
-def account_new_acc():
-    return render_template('account_new_acc.html')
+    return redirect('/')
 
 
 @app.route('/api/v1/login', methods=['POST'])
@@ -265,11 +237,11 @@ def api_main_account_post():
             # return jsonify({"message": "Pomyślnie zmieniono konto domyślne"}), 200
             return jsonify(user_account), 200
 
+
 @app.route('/api/v1/accounts/create', methods=['POST'])
 @jwt_required()
 def api_accounts_create():
     if request.is_json:
-
         name = request.json.get("acc_name", None)
         balance = request.json.get("acc_balance", None)
         username = get_jwt_identity()
@@ -288,13 +260,11 @@ def api_accounts_create():
 @jwt_required()
 def api_accounts_update():
     if request.is_json:
-        name = request.json.get("acc_name", None)
-        new_name = request.json.get("new_acc_name", None)
-        new_balance = request.json.get("new_acc_balance", None)
-        username = get_jwt_identity()
-        user = User.objects(username=username).first()
+        account_id = request.json.get("account_id", None)
+        new_name = request.json.get("acc_name", None)
+        new_balance = request.json.get("acc_balance", None)
 
-        account = Account.objects(user_id=user.id, name=name).first()
+        account = Account.objects(id=account_id).first()
         if new_balance or new_name:
             if new_balance:
                 account.update_one(balance=new_balance)
@@ -302,6 +272,17 @@ def api_accounts_update():
                 account.update_one(name=new_name)
             return jsonify({"message": "Poprawnie edytowano konto"}), 200
         return jsonify({"message": "Blad podczas edycji danych"}), 400
+    return jsonify({"success": False, "mssg": "Brak danych"}), 400
+
+
+@app.route('/api/v1/accounts/delete', methods=['DELETE'])
+@jwt_required()
+def api_accounts_delete():
+    if request.is_json:
+        account_id = request.json.get("account_id", None)
+        account = Account.objects(id=account_id).first()
+        account.delete()
+        return jsonify({"success": True, "mssg": "Poprawnie usunieto konto"}), 200
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 
