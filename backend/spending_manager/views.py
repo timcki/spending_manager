@@ -57,6 +57,8 @@ def api_login():
         p = request.json.get("password", None)
 
         user = User.objects(username=u).first()
+        if user is None:
+            return jsonify({"success": False}), 203
         # print(user.to_json())
         # account_id = user.main_account_id
         # account = Account.objects(id=account_id).first()
@@ -67,7 +69,7 @@ def api_login():
             set_access_cookies(response, access_token)
             return response, 200
 
-    return jsonify({}), 403
+    return jsonify({"success": False}), 403
 
 
 @app.route('/api/v1/registration', methods=['POST'])
@@ -81,6 +83,8 @@ def api_registration():
             hashed_password = hash_password(p)
             User(username=u, password=hashed_password, main_account_id=m).save()
             return jsonify({"success": True}), 200
+        else:
+            return jsonify({"success": False}), 203
 
     return jsonify({"success": False}), 400
 
@@ -204,14 +208,15 @@ def api_categories_create():
 @app.route('/api/v1/categories/delete', methods=['DELETE'])
 @jwt_required()
 def api_categories_delete():
-    if request.is_json:
-        category_id = request.json.get("category_id", None)
-        category = Category.objects(id=category_id).first()
-        if category.is_default:
-            return jsonify({"success": False, "mssg": "Nie możesz usunąć kategorii domyślnej"}), 400
-        else:
-            category.delete()
-            return jsonify({"success": True, "mssg": "Poprawnie usunięto kategorię"}), 200
+    # if request.is_json:
+    # category_id = request.json.get("category_id", None)
+    category_id = request.args.get("category_id", None)
+    category = Category.objects(id=category_id).first()
+    if category.is_default:
+        return jsonify({"success": False, "mssg": "Nie możesz usunąć kategorii domyślnej"}), 400
+    else:
+        category.delete()
+        return jsonify({"success": True, "mssg": "Poprawnie usunięto kategorię"}), 200
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 

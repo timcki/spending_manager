@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import InputNormal from '../InputNormal';
-import axios from 'axios';
 import api from '../../utils/api';
 import { AppContext } from '../../store/AppContext';
 
@@ -23,7 +22,7 @@ const messages = {
 };
 
 const AddAccountForm = () => {
-	const { CurrentAccount, getToken, getCsrfToken, setCurrentAccount } =
+	const { getToken, getCsrfToken } =
 		useContext(AppContext);
 
 	const [accountName, setAccountName] = useState('');

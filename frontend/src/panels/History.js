@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import api from '../utils/api';
-import axios from 'axios';
-// import Paginate from '../components/Paginate'
 import TransactionsList from '../components/TransactionsList';
 import { AppContext } from '../store/AppContext';
 
@@ -11,7 +9,7 @@ const History = () => {
 	const [page, setPage] = useState(1);
 	const [amountOnPage, setAmountOnPage] = useState(10);
 
-	const { getCsrfToken, getToken, currentAccount } = useContext(AppContext);
+	const { getCsrfToken, currentAccount } = useContext(AppContext);
 
 	useEffect(() => {
 		const fetchTransactions = async () => {

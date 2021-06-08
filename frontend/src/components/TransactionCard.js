@@ -67,7 +67,7 @@ const TransactionCard = ({
 									recipient: recipient,
 									amount: amount,
 									transaction_date: transaction_date,
-									transaction_id: id,
+									transaction_id: id
 								},
 							}}>
 							{<PencilSquare className="icons update-icon" />}

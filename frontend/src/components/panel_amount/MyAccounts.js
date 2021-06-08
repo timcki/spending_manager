@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import api from '../../utils/api';
 import { AppContext } from '../../store/AppContext';
 import AccountList from './AccountList';
@@ -7,7 +6,7 @@ import AccountList from './AccountList';
 const MyAccounts = () => {
 	const [accounts, setAccounts] = useState([]);
 	const [loading, setLoading] = useState(false);
-	const { user, getToken, getCsrfToken } = useContext(AppContext);
+	const { getCsrfToken } = useContext(AppContext);
 
 	const [amountOnPage, setAmountOnPage] = useState(10);
 	const [page, setPage] = useState(1);

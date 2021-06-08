@@ -16,7 +16,7 @@ const messages = {
 };
 
 const AddCategoryForm = () => {
-	const { user, getToken, getCsrfToken } = useContext(AppContext);
+	const { getCsrfToken } = useContext(AppContext);
 
 	const [categoryName, setCategoryName] = useState('');
 
@@ -51,7 +51,7 @@ const AddCategoryForm = () => {
 		if (correct) {
 			const payload = {
 				// username:user,
-				name: categoryName,
+				name: categoryName.toLowerCase(),
 			};
 			console.log(payload);
 			api.post('/api/v1/categories/create', payload, {

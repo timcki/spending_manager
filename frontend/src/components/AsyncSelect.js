@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { AppContext } from './../store/AppContext';
 import api from './../utils/api';

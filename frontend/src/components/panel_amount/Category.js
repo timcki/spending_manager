@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-// import api from '../utils/api';
-import axios from 'axios';
 import api from '../../utils/api';
 import { AppContext } from '../../store/AppContext';
 import CategoryList from './CategoryList';
@@ -10,7 +8,7 @@ const Category = () => {
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [amountOnPage, setAmountOnPage] = useState(10);
-	const { user, getToken, getCsrfToken } = useContext(AppContext);
+	const { getCsrfToken } = useContext(AppContext);
 
 	useEffect(() => {
 		const fetchCategory = async () => {

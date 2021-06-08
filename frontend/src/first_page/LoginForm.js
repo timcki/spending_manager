@@ -9,7 +9,7 @@ import {AppContext} from "../store/AppContext";
 
 const LoginForm = props => {
 
-	const {loginOnClickHandler,isLogin} = useContext(AppContext);
+	const {loginOnClickHandler} = useContext(AppContext);
 
 
 	const loginData = [
@@ -22,7 +22,7 @@ const LoginForm = props => {
 		{
 			name: 'password',
 			key: 'password',
-			type: 'text',
+			type: 'password',
 			placeholder: 'Hasło',
 		},
 	];

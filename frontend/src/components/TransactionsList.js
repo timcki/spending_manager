@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import Paginate from './Paginate';
 import TransactionCard from './TransactionCard';
 import api from '../utils/api';

@@ -9,8 +9,7 @@ import { AppContext } from './../store/AppContext';
 import api from './../utils/api';
 
 const Main = props => {
-	const { currentAccount, getCsrfToken, getToken, setCurrentAccount } =
-		useContext(AppContext);
+	const { getCsrfToken, setCurrentAccount } = useContext(AppContext);
 	const [accountData, setAccountData] = useState(null);
 
 	useEffect(() => {

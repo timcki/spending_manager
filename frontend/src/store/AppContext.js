@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { useCookies } from 'react-cookie';
 import { useHistory } from 'react-router';
+import {Redirect} from 'react-router-dom';
+
 export const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
@@ -9,7 +11,11 @@ const AppProvider = ({ children }) => {
 	// const [token, setToken]=useState();
 	const [cookies, setCookie, removeCookie] = useCookies();
 	const [currentAccount, setCurrentAccount] = useState(null);
-
+	const [isOpen,setIsOpen] = useState(false);
+	const [modalContent,setModalContent] = useState({
+		"header":"Błąd",
+		"content":"Problem z działaniem aplikacji"
+	});
 	const history = useHistory();
 
 	useEffect(() => {
@@ -44,24 +50,40 @@ const AppProvider = ({ children }) => {
 
 					// setIsAuthenticated(response.data.token !== null);
 				} else {
-					alert('Błędne logowanie');
-
+					setModalContent({
+						"header":"Błąd logowania",
+						"content":"Zostały podane nieprawidłowe dane logowania. Sprawdź nazwę użytkownika i hasło"
+					})
+					setIsOpen(true);
+					console.log("sdsdsada")
 					return false;
 				}
 			})
 			.catch(err => {});
 	};
 
+	// if(!isLogin()){
+	// 	<Redirect to="/"/>
+	// }
 	const signUpOnClickHandler = (payload, setSubmitting) => {
 		api.post('/api/v1/registration', payload)
 			.then(response => {
 				setSubmitting(false);
 				console.log(response);
 				if (response.data.success) {
-					alert(response.data.mssg + '\nPrzejdz do logowania!');
+					setModalContent({
+						"header":"Pomyślna rejestracja",
+						"content":"Udało Ci się zarejestrować. Przejdź do logowania.",
+						"type":true
+					})
+					setIsOpen(true);
 					return true;
 				} else {
-					alert(response.data.mssg);
+					setModalContent({
+						"header":"Błąd rejestracji",
+						"content":"Podana nazwa użytkownika jest już zajęta."
+					})
+					setIsOpen(true);
 					return false;
 				}
 			})
@@ -74,7 +96,8 @@ const AppProvider = ({ children }) => {
 		setUser(null);
 		// setToken(null);
 		removeCookie('token');
-		history.push('/');
+		// history.push('/');
+		<Redirect to='/' />
 	};
 
 	const takeFromLocalStorage = () => {
@@ -95,6 +118,9 @@ const AppProvider = ({ children }) => {
 		getCsrfToken,
 		currentAccount,
 		setCurrentAccount,
+		isOpen,
+		setIsOpen,
+		modalContent
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

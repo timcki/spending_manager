@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 import '../styles/Start.css';
 import { NavLink } from 'react-router-dom';
+import ModelComponent from '../components/ModelComponent'
+import { AppContext } from '../store/AppContext';
 
 const Start = props => {
+	const { isOpen,setIsOpen,modalContent } = useContext(AppContext);
 	const [isLogin, setIsLogin] = useState(true);
 
 	const getIsLoginClass = isLogin => {
@@ -12,6 +15,7 @@ const Start = props => {
 	};
 	return (
 		<>
+			<ModelComponent handleFunc={setIsOpen} modalIsOpen={isOpen} modalContent={modalContent}/>
 			<h2>Trzymaj finanse pod kontrolą</h2>
 			<p>
 				Menażdzer wydatków, który pomoże nadzorować twoje aktualne

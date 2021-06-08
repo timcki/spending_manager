@@ -8,7 +8,6 @@ import Select from '../components/Select';
 import '../styles/FormTransactions.css';
 import api from '../utils/api';
 import { AppContext } from '../store/AppContext';
-import { useCookies } from 'react-cookie';
 
 const dataTransaction = {
 	date: {
@@ -50,8 +49,7 @@ const FormTransactions = ({
 	p_id = '',
 	url = 'api/v1/transactions/create',
 }) => {
-	const { user, getToken, currentAccount, getCsrfToken, setCurrentAccount } =
-		useContext(AppContext);
+	const { currentAccount, getCsrfToken, setCurrentAccount } = useContext(AppContext);
 
 	const [date, setDate] = useState(p_date);
 	const [selectCategory, setSelectCategory] = useState(p_selectCategory);

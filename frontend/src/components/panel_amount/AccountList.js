@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
 import Paginate from '../Paginate';
 import AccountCard from './AccountCard';
 import '../../styles/panel_amount/accountList.css';
@@ -59,6 +58,7 @@ const AccountList = ({
 	});
 	return (
 		<>
+			{!actual.length&&<div>(<span>Dodaj swoje konta w zakładce <strong>Dodaj konto</strong></span>)</div>}
 			{loading ? (
 				<h3>Loading...</h3>
 			) : (
