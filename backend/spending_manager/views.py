@@ -67,6 +67,7 @@ def api_login():
             access_token = create_access_token(identity=u)
             response = make_response(jsonify({"token": access_token, "username": u}))
             set_access_cookies(response, access_token)
+            handle_forthcoming_transactions(u)
             return response, 200
 
     return jsonify({"success": False}), 403
@@ -359,43 +360,44 @@ def make_transaction_status(transaction_date):
     return transaction_status
 
 
-def handle_forthcoming_transactions(user_id):
+def handle_forthcoming_transactions(username):
+    user_id = User.objects(username=username).first().id
     user_accounts = Account.objects(user_id=user_id)
     for account in user_accounts:
-        account_id = account.account_id
+        account_id = account.id
         transactions = Transaction.objects(account_id=account_id, transaction_status="forthcoming")
         for transaction in transactions:
             transaction_date = transaction.transaction_date
-            if transaction_date > datetime.now(transaction_date.tzinfo):
+            if transaction_date < datetime.now(transaction_date.tzinfo):
                 transaction.update(transaction_status="executed")
-                update_balance_on_insert(account_id, transaction.transaction_type,transaction.amount,
+                update_balance_on_insert(account_id, transaction.transaction_type, transaction.amount,
                                          transaction.other_account_id, "executed")
-                while True:
-                    transaction_date += relativedelta(months=1)
-                    if transaction_date > datetime.now(transaction_date.tzinfo):
-                        Transaction(account_id=account_id,
-                                    amount=transaction.amount,
-                                    category_id=transaction.category_id,
-                                    transaction_type=transaction.transaction_type,
-                                    other_account_id=transaction.other_account_id,
-                                    transaction_status="forthcoming",
-                                    person=transaction.person,
-                                    recipient=transaction.recipient,
-                                    transaction_date=transaction_date,
-                                    cyclic_period=transaction.cyclic_period
-                                    ).save()
-                        break
-                    else:
-                        Transaction(account_id=account_id,
-                                    amount=transaction.amount,
-                                    category_id=transaction.category_id,
-                                    transaction_type=transaction.transaction_type,
-                                    other_account_id=transaction.other_account_id,
-                                    transaction_status="executed",
-                                    person=transaction.person,
-                                    recipient=transaction.recipient,
-                                    transaction_date=transaction_date,
-                                    cyclic_period=transaction.cyclic_period
-                                    ).save()
-                        update_balance_on_insert(account_id, transaction.transaction_type, transaction.amount,
-                                                 transaction.other_account_id, transaction_date)
+                # while True:
+                #     transaction_date += relativedelta(months=1)
+                #     if transaction_date > datetime.now(transaction_date.tzinfo):
+                #         Transaction(account_id=account_id,
+                #                     amount=transaction.amount,
+                #                     category_id=transaction.category_id,
+                #                     transaction_type=transaction.transaction_type,
+                #                     other_account_id=transaction.other_account_id,
+                #                     transaction_status="forthcoming",
+                #                     person=transaction.person,
+                #                     recipient=transaction.recipient,
+                #                     transaction_date=transaction_date,
+                #                     cyclic_period=transaction.cyclic_period
+                #                     ).save()
+                #         break
+                #     else:
+                #         Transaction(account_id=account_id,
+                #                     amount=transaction.amount,
+                #                     category_id=transaction.category_id,
+                #                     transaction_type=transaction.transaction_type,
+                #                     other_account_id=transaction.other_account_id,
+                #                     transaction_status="executed",
+                #                     person=transaction.person,
+                #                     recipient=transaction.recipient,
+                #                     transaction_date=transaction_date,
+                #                     cyclic_period=transaction.cyclic_period
+                #                     ).save()
+                #         update_balance_on_insert(account_id, transaction.transaction_type, transaction.amount,
+                #                                  transaction.other_account_id, transaction_date)
