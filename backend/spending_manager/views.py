@@ -241,12 +241,12 @@ def api_categories_create():
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 
-@app.route('/api/v1/categories/delete', methods=['DELETE'])
+@app.route('/api/v1/categories/delete', methods=['POST'])
 @jwt_required()
 def api_categories_delete():
     # if request.is_json:
     # category_id = request.json.get("category_id", None)
-    category_id = request.args.get("category_id", None)
+    category_id = request.json.get("category_id", None)
     category = Category.objects(id=category_id).first()
     if category.is_default:
         return jsonify({"success": False, "mssg": "Nie możesz usunąć kategorii domyślnej"}), 400
