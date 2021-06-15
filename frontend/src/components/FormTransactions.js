@@ -58,6 +58,12 @@ const FormTransactions = ({
 	const [amount, setAmount] = useState(p_amount);
 	const [id, setId] = useState(p_id);
 
+	const [isOpen, setIsOpen] = useState(false);
+	const [modalContent, setModalContent] = useState({
+		header: 'Błąd',
+		content: 'Problem z działaniem aplikacji',
+	});
+
 	const [category, setCategory] = useState([]);
 
 	const [isOpenCalculator, setIsOpenCalculator] = useState(false);
@@ -152,6 +158,7 @@ const FormTransactions = ({
 		e.preventDefault();
 		let { correct, ...valid } = validationFun();
 
+
 		const payload = {
 			account_id: currentAccount._id.$oid,
 			amount: amount,
@@ -161,7 +168,7 @@ const FormTransactions = ({
 			recipient: description,
 			transaction_id: id,
 		};
-		if (correct) {
+if (correct) {
 			api.post(url, payload, {
 				headers: {
 					'X-CSRF-TOKEN': `${getCsrfToken()}`,
@@ -176,24 +183,27 @@ const FormTransactions = ({
 				})
 				.catch(err => {});
 
-			setDate(new Date());
-			setAmount(0);
-			setDescription('');
-			setSelectCategory('');
-			setSelectType('');
+				setDate(new Date());
+				setAmount(0);
+				setDescription('');
+				setSelectCategory('');
+				setSelectType('');
 
-			setErrors({
-				date: false,
-				category: false,
-				type: false,
-				description: false,
-				amount: false,
-				openCalculator: false,
-			});
+				setErrors({
+					date: false,
+					category: false,
+					type: false,
+					description: false,
+					amount: false,
+					openCalculator: false,
+				});
+			} else {
+				setErrors({
+					...valid,
+				});
+			}
 		} else {
-			setErrors({
-				...valid,
-			});
+			alert('Prosze najpierw wprowadzic konto!');
 		}
 	};
 	return (

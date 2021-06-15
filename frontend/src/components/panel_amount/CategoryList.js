@@ -28,7 +28,8 @@ const CategoryList = ({
 
 	let updateCategory = null;
 	const deleteCategory = id => {
-		api.delete('/api/v1/categories/delete?category_id='+id, {
+		const payload = { category_id: id };
+		api.post('/api/v1/categories/delete',payload, {
 			headers: {
 				'X-CSRF-TOKEN': `${getCsrfToken()}`,
 				'Content-Type': 'application/json',

@@ -55,7 +55,9 @@ const FormTransactions = ({
 	const [date, setDate] = useState(p_date);
 	const [selectCategory, setSelectCategory] = useState(p_selectCategory);
 	const [transactionType, setTransactionType] = useState(3); // transfer is mapped to an int of value 3 on backend
+
 	const [selectTargetAccount, setSelectTargetAccount] = useState(p_targetAccount);
+
 	const [description, setDescription] = useState(p_description);
 	const [amount, setAmount] = useState(p_amount);
 	const [id, setId] = useState(p_id);
@@ -163,6 +165,7 @@ const FormTransactions = ({
 			recipient: description,
 			transaction_id: id,
 			other_account_id: selectTargetAccount.value,
+
 			other_account_name: selectTargetAccount.label,
 		};
 

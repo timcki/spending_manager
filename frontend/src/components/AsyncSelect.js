@@ -28,7 +28,6 @@ import api from './../utils/api';
 				label: el.name,
 			}));
 			console.log(categoriesNames);
-
 			// const hasMore = categoriesNames.length > loadedOptions.length;
 			// const slicedOptions = categoriesNames.slice(
 			// 	loadedOptions.length - 3,
@@ -54,7 +53,7 @@ import api from './../utils/api';
 				label: el.name,
 				value: Object.values(el._id)[0],
 			}));
-				
+			
 			const newAccountNames=accountNames.filter(el=>el.label!==currentAccount.name)
 
 			// const hasMore = accountNames.length > loadedOptions.length;

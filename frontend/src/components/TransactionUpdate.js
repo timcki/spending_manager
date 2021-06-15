@@ -13,6 +13,7 @@ const transaction_types = {
 };
 
 const TransactionUpdate = ({ match, location }) => {
+
 	console.log("terasxax")
 	console.log(location.state)
 
@@ -69,6 +70,7 @@ const TransactionUpdate = ({ match, location }) => {
 				p_targetAccount={{
 					value: other_account_id,
 					label: location.state.other_account_name
+
 				}}
 				p_id={location.state.transaction_id}
 				url="/api/v1/transactions/update"
