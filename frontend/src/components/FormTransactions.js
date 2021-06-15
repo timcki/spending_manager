@@ -58,10 +58,10 @@ const FormTransactions = ({
 	const [amount, setAmount] = useState(p_amount);
 	const [id, setId] = useState(p_id);
 
-	const [isOpen,setIsOpen] = useState(false);
-	const [modalContent,setModalContent] = useState({
-		"header":"Błąd",
-		"content":"Problem z działaniem aplikacji"
+	const [isOpen, setIsOpen] = useState(false);
+	const [modalContent, setModalContent] = useState({
+		header: 'Błąd',
+		content: 'Problem z działaniem aplikacji',
 	});
 
 	const [category, setCategory] = useState([]);
@@ -157,7 +157,7 @@ const FormTransactions = ({
 	const handleSubmit = e => {
 		e.preventDefault();
 		let { correct, ...valid } = validationFun();
-		if(currentAccount != null){
+		if (currentAccount != null) {
 			const payload = {
 				account_id: currentAccount._id.$oid,
 				amount: amount,
@@ -167,28 +167,19 @@ const FormTransactions = ({
 				recipient: description,
 				transaction_id: id,
 			};
-		const payload = {
-			account_id: currentAccount._id.$oid,
-			amount: amount,
-			transaction_type: selectType.value,
-			category_id: selectCategory.value,
-			transaction_date: date,
-			recipient: description,
-			transaction_id: id,
-		};
-		if (correct) {
-			api.post(url, payload, {
-				headers: {
-					'X-CSRF-TOKEN': `${getCsrfToken()}`,
-					'Content-Type': 'application/json',
-				},
-			})
-				.then(response => {
-					if (response.status === 200) {
-						console.log(response);
-						setCurrentAccount(response.data);
-					}
+			if (correct) {
+				api.post(url, payload, {
+					headers: {
+						'X-CSRF-TOKEN': `${getCsrfToken()}`,
+						'Content-Type': 'application/json',
+					},
 				})
+					.then(response => {
+						if (response.status === 200) {
+							console.log(response);
+							setCurrentAccount(response.data);
+						}
+					})
 					.then(response => {
 						if (response.status === 200) {
 							console.log(response);
@@ -216,9 +207,8 @@ const FormTransactions = ({
 					...valid,
 				});
 			}
-
-		}else{
-			alert("Prosze najpierw wprowadzic konto!");
+		} else {
+			alert('Prosze najpierw wprowadzic konto!');
 		}
 	};
 	return (
