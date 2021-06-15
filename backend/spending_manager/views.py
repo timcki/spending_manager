@@ -30,6 +30,7 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
+
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
@@ -129,6 +130,7 @@ def api_transactions_get():
     tx = Transaction.objects(account_id=user.main_account_id)
     return jsonify(tx), 200
 
+
 @app.route('/api/v1/transaction/get', methods=['GET'])
 @jwt_required()
 def api_transaction_get():
@@ -139,6 +141,38 @@ def api_transaction_get():
 
     tx = Transaction.objects(id=transaction_id)
     return jsonify(tx), 200
+
+
+@app.route('/api/v1/statistics/get', methods=['GET'])
+@jwt_required()
+def api_statistics_get():
+    username = get_jwt_identity()
+    user = User.objects(username=username).first()
+
+    transactions = Transaction.objects(account_id=user.main_account_id)
+    stats = {}
+    for transaction in transactions:
+        month = transaction.transaction_date.month
+        year = transaction.transaction_date.year
+        amount = transaction.amount
+        month_year = str(month)+"-"+str(year)
+        if month_year in stats:
+            if transaction.transaction_type == 1:
+                stats[month_year]["expense"] += amount
+            elif transaction.transaction_type == 2:
+                stats[month_year]["income"] += amount
+        else:
+            stats[month_year] = {}
+            stats[month_year]["month"] = month
+            stats[month_year]["year"] = year
+            if transaction.transaction_type == 1:
+                stats[month_year]["expense"] = amount
+                stats[month_year]["income"] = 0
+            elif transaction.transaction_type == 2:
+                stats[month_year]["income"] = amount
+                stats[month_year]["expense"] = 0
+
+    return stats, 200
 
 
 @app.route('/api/v1/transactions/update', methods=['POST'])
@@ -154,13 +188,14 @@ def api_transactions_update():
 
         tx = Transaction.objects(id=transaction_id).first()
         before_update_data = get_transaction_data(tx)
-        tx.update(id=transaction_id, amount=amount,transaction_date=transaction_date, category_id=category_id, transaction_type=transaction_type, recipient=recipient)
+        tx.update(id=transaction_id, amount=amount, transaction_date=transaction_date, category_id=category_id,
+                  transaction_type=transaction_type, recipient=recipient)
         after_update_data = get_transaction_data(Transaction.objects(id=transaction_id).first())
         update_balance_on_update(before_update_data, after_update_data)
-        
+
         username = get_jwt_identity()
         user = User.objects(username=username).first()
-        user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
+        user_account = Account.objects(user_id=user.id, id=user.main_account_id).first()
         return jsonify(user_account), 200
 
     return jsonify({"success": False}), 400
@@ -177,7 +212,7 @@ def api_transactions_delete():
         update_balance_on_delete(before_delete_data)
         username = get_jwt_identity()
         user = User.objects(username=username).first()
-        user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
+        user_account = Account.objects(user_id=user.id, id=user.main_account_id).first()
         return jsonify(user_account), 200
     return jsonify({"success": False}), 400
 
@@ -189,7 +224,7 @@ def api_categories_get():
     user = User.objects(username=username).first()
     users_categories = list(Category.objects(user_id=user.id))
     default_categories = list(Category.objects(is_default=True))
-    result = users_categories+default_categories
+    result = users_categories + default_categories
     return jsonify(result), 200
 
 
@@ -206,12 +241,12 @@ def api_categories_create():
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 
-@app.route('/api/v1/categories/delete', methods=['DELETE'])
+@app.route('/api/v1/categories/delete', methods=['POST'])
 @jwt_required()
 def api_categories_delete():
     # if request.is_json:
     # category_id = request.json.get("category_id", None)
-    category_id = request.args.get("category_id", None)
+    category_id = request.json.get("category_id", None)
     category = Category.objects(id=category_id).first()
     if category.is_default:
         return jsonify({"success": False, "mssg": "Nie możesz usunąć kategorii domyślnej"}), 400
@@ -230,6 +265,7 @@ def api_accounts_get():
     users_accounts = Account.objects(user_id=user.id)
     return jsonify(users_accounts), 200
 
+
 @app.route('/api/v1/main_account/get', methods=['GET'])
 @jwt_required()
 def api_main_account_get():
@@ -238,8 +274,9 @@ def api_main_account_get():
     if user.main_account_id is None:
         return jsonify({"message": "Użytkownik nie posiada głównego konta"}), 400
     else:
-        user_account = Account.objects(user_id=user.id,id=user.main_account_id).first()
+        user_account = Account.objects(user_id=user.id, id=user.main_account_id).first()
         return jsonify(user_account), 200
+
 
 @app.route('/api/v1/main_account/post', methods=['POST'])
 @jwt_required()
@@ -251,8 +288,8 @@ def api_main_account_post():
         if user.main_account_id is account_id:
             return jsonify({"message": "Wybrano to samo konto"}), 200
         else:
-            user.update(main_account_id = account_id)
-            user_account = Account.objects(user_id=user.id,id=account_id).first()
+            user.update(main_account_id=account_id)
+            user_account = Account.objects(user_id=user.id, id=account_id).first()
 
             # return jsonify({"message": "Pomyślnie zmieniono konto domyślne"}), 200
             return jsonify(user_account), 200
@@ -345,17 +382,19 @@ def get_transaction_data(transaction):
 def update_balance_on_update(before_update_data, after_update_data):
     update_balance_on_delete(before_update_data)
     update_balance_on_insert(after_update_data["account_id"], after_update_data["transaction_type"],
-                             after_update_data["amount"], after_update_data["other_account_id"], after_update_data["transaction_status"])
+                             after_update_data["amount"], after_update_data["other_account_id"],
+                             after_update_data["transaction_status"])
 
 
 def update_balance_on_delete(before_delete_data):
     update_balance_on_insert(before_delete_data["account_id"], before_delete_data["transaction_type"],
-                             -before_delete_data["amount"], before_delete_data["other_account_id"], before_delete_data["transaction_status"])
+                             -before_delete_data["amount"], before_delete_data["other_account_id"],
+                             before_delete_data["transaction_status"])
 
 
 def make_transaction_status(transaction_date):
     transaction_status = "executed"
-    if transaction_date>datetime.now(transaction_date.tzinfo):
+    if transaction_date > datetime.now(transaction_date.tzinfo):
         transaction_status = "forthcoming"
     return transaction_status
 
