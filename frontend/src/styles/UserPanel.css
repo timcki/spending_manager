@@ -1,11 +1,44 @@
-.user-panel{
-    background-color: #ddd;
-    width:90%;
-    margin: 20px auto;
-    padding: 20px 15px;
-    border-radius: 20px;
-    border: 1px solid black;
+.user-panel {
+	background-color: #ddd;
+	width: 90%;
+	margin: 20px auto;
+	padding: 20px 15px;
+	border-radius: 1rem;
+	border: 1px solid black;
 }
-.user-panel p{
-    margin-bottom:20px;
+
+.user-panel .no-account-notification {
+	text-align: center;
+}
+
+.user-panel .current-account-data-container {
+	display: flex;
+	justify-content: space-around;
+	font-family: 'Poppins', sans-serif;
+}
+
+/*current account name*/
+.user-panel .current-account-name-wrapper {
+	margin: 0;
+}
+.user-panel .current-account-name-wrapper .current-account-name-label {
+	margin: 0;
+}
+.user-panel .current-account-name-wrapper .current-account-name-value {
+	font-weight: bold;
+	font-size: 1.3rem;
+	margin: 0;
+}
+
+/*current account balance*/
+.user-panel .current-account-name-wrapper {
+	margin: 0;
+}
+.user-panel .current-account-balance-wrapper .current-account-balance-label {
+	margin: 0;
+}
+.user-panel .current-account-balance-wrapper .current-account-balance-value {
+	margin: 0;
+	font-size: 1.3rem;
+	font-weight: bold;
 }

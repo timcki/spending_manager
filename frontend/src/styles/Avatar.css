@@ -1,11 +1,26 @@
-.avatar div{
-    text-align: center;
-    margin: 30px 0 5px;
+.avatar div {
+	text-align: center;
+	margin: 30px 0 5px;
 }
-.avatar div img{
-    width:50%;
+.avatar div img {
+	width: 50%;
 }
-.avatar p{
-    margin:0;
-    text-align: center;
+.avatar .user-name {
+	margin: 0;
+	text-align: center;
+	font-size: 2rem;
+	margin-left: 1rem;
+}
+.avatar .user-name-container {
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: inherit;
+	max-width: 100%;
+	word-wrap: break-word;
+}
+
+.avatar .user-name-icon {
+	font-size: 2rem;
 }
