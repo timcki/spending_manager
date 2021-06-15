@@ -158,7 +158,6 @@ const FormTransactions = ({
 		e.preventDefault();
 		let { correct, ...valid } = validationFun();
 
-
 		const payload = {
 			account_id: currentAccount._id.$oid,
 			amount: amount,
@@ -168,7 +167,7 @@ const FormTransactions = ({
 			recipient: description,
 			transaction_id: id,
 		};
-if (correct) {
+		if (correct) {
 			api.post(url, payload, {
 				headers: {
 					'X-CSRF-TOKEN': `${getCsrfToken()}`,
@@ -183,29 +182,27 @@ if (correct) {
 				})
 				.catch(err => {});
 
-				setDate(new Date());
-				setAmount(0);
-				setDescription('');
-				setSelectCategory('');
-				setSelectType('');
+			setDate(new Date());
+			setAmount(0);
+			setDescription('');
+			setSelectCategory('');
+			setSelectType('');
 
-				setErrors({
-					date: false,
-					category: false,
-					type: false,
-					description: false,
-					amount: false,
-					openCalculator: false,
-				});
-			} else {
-				setErrors({
-					...valid,
-				});
-			}
+			setErrors({
+				date: false,
+				category: false,
+				type: false,
+				description: false,
+				amount: false,
+				openCalculator: false,
+			});
 		} else {
-			alert('Prosze najpierw wprowadzic konto!');
+			setErrors({
+				...valid,
+			});
 		}
 	};
+
 	return (
 		<div className="form-transactions">
 			<form onSubmit={handleSubmit} noValidate>
@@ -279,7 +276,9 @@ if (correct) {
 						)}
 					</div>
 					<div className="save-transaction">
-						<button disabled={currentAccount?false:true}>Zapisz</button>
+						<button disabled={currentAccount ? false : true}>
+							Zapisz
+						</button>
 					</div>
 				</div>
 			</form>
