@@ -96,13 +96,11 @@ def api_registration():
 def api_transactions_create():
     if request.is_json:
         account_id = request.json.get('account_id', None)
-        # account_id = ObjectId("60b68dc85acd604ff41edfac") #account_id for already added account
         amount = float(request.json.get("amount", None))
         transaction_type = int(request.json.get("transaction_type", None))
         transaction_date = dateutil.parser.parse(request.json.get("transaction_date", None))
         transaction_status = make_transaction_status(transaction_date)
         other_account_id = request.json.get("other_account_id", None)
-        #other_account_id = ObjectId("60b6980f0dac384440439a77")
         # TODO: Transaction(**request.json).save()
         Transaction(account_id=account_id,
                     amount=amount,
@@ -236,8 +234,13 @@ def api_categories_create():
         user = User.objects(username=username).first()
         name = request.json.get("name", None)
         icon_colour = request.json.get("icon_colour", None)
-        Category(user_id=user.id, name=name, icon_colour=icon_colour, is_default=False).save()
-        return jsonify({"message": "Poprawnie dodano kategorie"}), 200
+        category = Category.objects(user_id=user.id, name=name).first()
+        if category is None:
+            Category(user_id=user.id, name=name, icon_colour=icon_colour, is_default=False).save()
+            return jsonify({"message": "Poprawnie dodano kategorie"}), 200
+        else:
+            return jsonify({"success": False, "message": "Kategoria o podanej nazwie już istnieje"}), 409
+
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 
