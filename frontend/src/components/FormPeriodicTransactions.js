@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import InputNormal from '../components/InputNormal';
+import InputNormal from './InputNormal';
 
-import DatePicker from '../components/DatePicker';
-import InputCalculator from '../components/InputCalculator';
-import AsyncSelect from '../components/AsyncSelect';
-import Select from '../components/Select';
+import DatePicker from './DatePicker';
+import InputCalculator from './InputCalculator';
+import AsyncSelect from './AsyncSelect';
+import Select from './Select';
 import '../styles/FormTransactions.css';
 import api from '../utils/api';
 import { AppContext } from '../store/AppContext';
@@ -12,7 +12,7 @@ import { AppContext } from '../store/AppContext';
 const dataTransaction = {
 	date: {
 		name: 'date',
-		label: 'Data transakcji',
+		label: 'Data pierwszej transakcji',
 	},
 	category: {
 		name: 'category',
@@ -30,6 +30,11 @@ const dataTransaction = {
 		type: 'text',
 		placeholder: 'np. Zakupy w sklepie itp.',
 	},
+	period: {
+		name: 'type',
+		label: 'Częstotliwość co',
+		placeholder: 'Wybierz',
+	},
 };
 const messages = {
 	date: 'Musisz wybrać date',
@@ -43,6 +48,7 @@ const FormTransactions = ({
 	p_amount = 0,
 	p_date = new Date(),
 	p_selectCategory = '',
+	p_selectPeriod = '',
 	p_selectType = '',
 	p_description = '',
 	p_id = '',
@@ -53,6 +59,7 @@ const FormTransactions = ({
 
 	const [date, setDate] = useState(p_date);
 	const [selectCategory, setSelectCategory] = useState(p_selectCategory);
+	const [selectPeriod, setSelectPeriod] = useState(p_selectPeriod);
 	const [selectType, setSelectType] = useState(p_selectType);
 	const [description, setDescription] = useState(p_description);
 	const [amount, setAmount] = useState(p_amount);
@@ -93,6 +100,10 @@ const FormTransactions = ({
 
 	const handleSelectCategory = selectCategory => {
 		setSelectCategory(selectCategory);
+	};
+
+	const handleSelectPeriod = selectPeriod => {
+		setSelectPeriod(selectPeriod);
 	};
 
 	const handleSelectType = selectType => {
@@ -160,6 +171,7 @@ const FormTransactions = ({
 			transaction_date: date,
 			recipient: description,
 			transaction_id: id,
+			cyclic_period: selectPeriod.label,
 		};
 		if (correct) {
 			api.post(url, payload, {
@@ -170,7 +182,6 @@ const FormTransactions = ({
 			})
 				.then(response => {
 					if (response.status === 200) {
-						console.log(response);
 						setCurrentAccount(response.data);
 					}
 				})
@@ -230,6 +241,19 @@ const FormTransactions = ({
 							</div>
 						)}
 					</div>
+					<div className="period-transactions">
+						<Select
+							type={'period'}
+							value={selectPeriod}
+							onchange={handleSelectPeriod}
+							{...dataTransaction.period}
+						/>
+						{errors.period && (
+							<div className="error-transactions">
+								{messages.period}
+							</div>
+						)}
+					</div>
 					<div className="category-transactions">
 						<AsyncSelect
 							type={'categories'}
@@ -269,7 +293,7 @@ const FormTransactions = ({
 						)}
 					</div>
 					<div className="save-transaction">
-						<button disabled={currentAccount?false:true}>Zapisz</button>
+						<button>Zapisz</button>
 					</div>
 				</div>
 			</form>

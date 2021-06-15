@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import InputNormal from '../components/InputNormal';
+import InputNormal from './InputNormal';
 
-import DatePicker from '../components/DatePicker';
-import InputCalculator from '../components/InputCalculator';
-import AsyncSelect from '../components/AsyncSelect';
-import Select from '../components/Select';
+import DatePicker from './DatePicker';
+import InputCalculator from './InputCalculator';
+import AsyncSelect from './AsyncSelect';
+import Select from './Select';
 import '../styles/FormTransactions.css';
 import api from '../utils/api';
 import { AppContext } from '../store/AppContext';
@@ -12,29 +12,29 @@ import { AppContext } from '../store/AppContext';
 const dataTransaction = {
 	date: {
 		name: 'date',
-		label: 'Data transakcji',
+		label: 'Data przelewu',
 	},
 	category: {
 		name: 'category',
 		label: 'Kategoria',
 		placeholder: 'Wybierz',
 	},
-	type: {
+	target_account: {
 		name: 'type',
-		label: 'Typ transakcji',
+		label: 'Przelew na konto',
 		placeholder: 'Wybierz',
 	},
 	name: {
 		name: 'name',
 		label: 'Nazwa',
-		type: 'text',
+		target_account: 'text',
 		placeholder: 'np. Zakupy w sklepie itp.',
 	},
 };
 const messages = {
 	date: 'Musisz wybrać date',
 	category: 'Musisz wybrać kategorie',
-	type: 'Musisz wybrać typ transakcji',
+	target_account: 'Musisz wybrać konto na które chcesz przelać pieniądze',
 	name: 'Nazwa musi mieć od 4 do 200 znaków',
 	amount: 'Kwota musi być większa od zera',
 };
@@ -44,6 +44,7 @@ const FormTransactions = ({
 	p_date = new Date(),
 	p_selectCategory = '',
 	p_selectType = '',
+	p_targetAccount = '',
 	p_description = '',
 	p_id = '',
 	url = 'api/v1/transactions/create',
@@ -53,7 +54,8 @@ const FormTransactions = ({
 
 	const [date, setDate] = useState(p_date);
 	const [selectCategory, setSelectCategory] = useState(p_selectCategory);
-	const [selectType, setSelectType] = useState(p_selectType);
+	const [transactionType, setTransactionType] = useState(3); // transfer is mapped to an int of value 3 on backend
+	const [selectTargetAccount, setSelectTargetAccount] = useState(p_targetAccount);
 	const [description, setDescription] = useState(p_description);
 	const [amount, setAmount] = useState(p_amount);
 	const [id, setId] = useState(p_id);
@@ -65,7 +67,7 @@ const FormTransactions = ({
 	const [errors, setErrors] = useState({
 		date: false,
 		category: false,
-		type: false,
+		target_account: false,
 		description: false,
 		amount: false,
 		openCalculator: false,
@@ -95,8 +97,8 @@ const FormTransactions = ({
 		setSelectCategory(selectCategory);
 	};
 
-	const handleSelectType = selectType => {
-		setSelectType(selectType);
+	const handleSelectTargetAccount = selectTargetAccount => {
+		setSelectTargetAccount(selectTargetAccount);
 	};
 	const handleSetDescription = e => {
 		setDescription(e.target.value);
@@ -118,7 +120,7 @@ const FormTransactions = ({
 		if (date == null) {
 			errDate = true;
 		}
-		if (selectType === '') {
+		if (selectTargetAccount === '') {
 			errType = true;
 		}
 		if (selectCategory === '') {
@@ -141,7 +143,7 @@ const FormTransactions = ({
 			correct,
 			date: errDate,
 			category: errCategory,
-			type: errType,
+			target_account: errType,
 			description: errDescription,
 			amount: errAmount,
 			openCalculator: errOpenCalculator,
@@ -155,12 +157,16 @@ const FormTransactions = ({
 		const payload = {
 			account_id: currentAccount._id.$oid,
 			amount: amount,
-			transaction_type: selectType.value,
+			transaction_type: transactionType,
 			category_id: selectCategory.value,
 			transaction_date: date,
 			recipient: description,
 			transaction_id: id,
+			other_account_id: selectTargetAccount.value,
+			other_account_name: selectTargetAccount.label,
 		};
+
+		console.log(payload);
 		if (correct) {
 			api.post(url, payload, {
 				headers: {
@@ -180,12 +186,12 @@ const FormTransactions = ({
 			setAmount(0);
 			setDescription('');
 			setSelectCategory('');
-			setSelectType('');
+			setSelectTargetAccount('');
 
 			setErrors({
 				date: false,
 				category: false,
-				type: false,
+				target_account: false,
 				description: false,
 				amount: false,
 				openCalculator: false,
@@ -218,6 +224,19 @@ const FormTransactions = ({
 				</div>
 
 				<div className="move-inputs">
+					<div className="target_account-transactions">
+						<AsyncSelect
+							type={'accounts'}
+							value={selectTargetAccount}
+							onchange={handleSelectTargetAccount}
+							{...dataTransaction.target_account}
+						/>
+						{errors.target_account && (
+							<div className="error-transactions">
+								{messages.target_account}
+							</div>
+						)}
+					</div>
 					<div className="date-transactions">
 						<DatePicker
 							onchange={handleDatePicker}
@@ -243,19 +262,6 @@ const FormTransactions = ({
 							</div>
 						)}
 					</div>
-					<div className="type-transactions">
-						<Select
-							type={'transaction'}
-							value={selectType}
-							onchange={handleSelectType}
-							{...dataTransaction.type}
-						/>
-						{errors.type && (
-							<div className="error-transactions">
-								{messages.type}
-							</div>
-						)}
-					</div>
 					<div className="description-transactions">
 						<InputNormal
 							value={description}
@@ -269,7 +275,7 @@ const FormTransactions = ({
 						)}
 					</div>
 					<div className="save-transaction">
-						<button disabled={currentAccount?false:true}>Zapisz</button>
+						<button>Zapisz</button>
 					</div>
 				</div>
 			</form>

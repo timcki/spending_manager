@@ -3,6 +3,7 @@ import Paginate from './Paginate';
 import TransactionCard from './TransactionCard';
 import api from '../utils/api';
 import { AppContext } from './../store/AppContext';
+import '../styles/transactionList.css';
 
 const TransactionsList = ({
 	data,
@@ -36,12 +37,6 @@ const TransactionsList = ({
 	};
 	console.log(data);
 	const actual = data.map((transaction, index) => (
-		// <li key ={transaction.id}>
-		//     <Link to={`/history/${transaction.id}`}>
-		//     {transaction.name}
-		//     </Link>
-		// </li>
-		// <TransactionCard key={index} id={index + 1} {...transaction} deleteFun={()=>deleteTransaction(Object.values(transaction._id)[0])} />
 		<TransactionCard
 			key={index}
 			id={Object.values(transaction._id)[0]}
@@ -50,26 +45,25 @@ const TransactionsList = ({
 				deleteTransaction(Object.values(transaction._id)[0])
 			}
 		/>
-		/* <Link to={`/history/${transaction.id}`}>
-            {transaction.name}
-            </Link> */
 	));
 	return (
-		<ul>
+		<>
 			{loading ? (
 				<h3>Loading...</h3>
 			) : (
-				<div>
-					{actual}
-					<Paginate
-						amountOnPage={amountOnPage}
-						totalAmount={totalAmount}
-						onclick={onclick}
-						page={page}
-					/>
+				<div className="transaction-list">
+					<div className="transaction-content">{actual}</div>
+					<div className="transaction-pagination">
+						<Paginate
+							amountOnPage={amountOnPage}
+							totalAmount={totalAmount}
+							onclick={onclick}
+							page={page}
+						/>
+					</div>
 				</div>
 			)}
-		</ul>
+		</>
 	);
 };
 

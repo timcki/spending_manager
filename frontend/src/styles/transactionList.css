@@ -1,0 +1,16 @@
+.transaction-list {
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	padding-top: 10px;
+	height: 100%;
+	/* margin:20px; */
+	justify-content: flex-end;
+    padding-bottom: 20px;
+}
+.transaction-list .transaction-content {
+	flex-grow: 1;
+}
+.transaction-list .transaction-pagination {
+	align-self: center;
+}

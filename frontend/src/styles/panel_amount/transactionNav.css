@@ -1,15 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
 
-.account-nav ul {
+.transaction-nav ul {
 	list-style: none;
 	display: flex;
 	background-color: transparent;
 	border-bottom: 2px solid #264653;
 	padding: 10px;
 	justify-content: space-around;
+	margin-bottom: 2.5rem;
 }
 
-.account-nav ul li a {
+.transaction-nav ul li a {
 	font-family: 'Poppins', sans-serif;
 	display: block;
 	text-decoration: none;
@@ -23,17 +24,17 @@
 	transition: background-color 0.3s ease-out, border-color 0.3s ease-out,
 		color 0.3s ease-out;
 }
-.account-nav ul li a:active {
+.transaction-nav ul li a:active {
 	transform: scale(0.98);
 }
-.account-nav ul li a:hover {
+.transaction-nav ul li a:hover {
 	background-color: #2a9d8f;
 }
-.account-nav ul li a.active {
+.transaction-nav ul li a.active {
 	color: #e9c46a;
 	border-color: rgb(179, 140, 14);
 	background-color: #2a9d8f;
 }
-.account-nav ul li:last-child {
+.transaction-nav ul li:last-child {
 	order: -1;
 }

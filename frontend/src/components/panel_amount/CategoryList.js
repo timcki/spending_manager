@@ -11,6 +11,8 @@ const CategoryList = ({
 	totalAmount,
 	onclick,
 	page,
+	manageCategory,
+	allCategory
 }) => {
 	const { getCsrfToken } = useContext(AppContext);
 
@@ -24,7 +26,7 @@ const CategoryList = ({
 		actual = (<span>Dodaj swoje kategorie w zakładce <strong>Dodaj kategorie</strong></span>);
 	}
 
-
+	let updateCategory = null;
 	const deleteCategory = id => {
 		api.delete('/api/v1/categories/delete?category_id='+id, {
 			headers: {
@@ -36,6 +38,11 @@ const CategoryList = ({
 				if (response.status === 200) {
 					console.log(response);
 					console.log('usunieto');
+					console.log(allCategory)
+					updateCategory=allCategory.filter(elem=>Object.values(elem._id)[0]!==id);
+					console.log("updateCategory")
+					console.log(updateCategory)
+					manageCategory(updateCategory);
 				}
 			})
 			.catch(err => {});
