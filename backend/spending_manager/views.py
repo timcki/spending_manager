@@ -104,6 +104,9 @@ def api_transactions_create():
         transaction_date = dateutil.parser.parse(request.json.get("transaction_date", None))
         transaction_status = make_transaction_status(transaction_date)
         other_account_id = request.json.get("other_account_id", None)
+        other_account_name = request.json.get("other_account_name", None)
+        #other_account_id = ObjectId("60b6980f0dac384440439a77")
+        # TODO: Transaction(**request.json).save()
         cyclic_period = request.json.get("cyclic_period", None)
 
         Transaction(account_id=account_id,
@@ -111,6 +114,7 @@ def api_transactions_create():
                     category_id=category_id,
                     transaction_type=transaction_type,
                     other_account_id=other_account_id,
+                    other_account_name=other_account_name,
                     transaction_status=transaction_status,
                     person=person,
                     recipient=recipient,
@@ -153,6 +157,13 @@ def api_transactions_get():
     tx = Transaction.objects(account_id=user.main_account_id)
     return jsonify(tx), 200
 
+# @app.route('/api/v1/transaction/get', methods=['GET'])
+# @jwt_required()
+# def api_transaction_get():
+#     # if request.is_json:
+#     transaction_id = request.args.get('transaction_id', None)
+#     username = get_jwt_identity()
+#     user = User.objects(username=username).first()
 
 @app.route('/api/v1/transaction/get', methods=['GET'])
 @jwt_required()
@@ -162,8 +173,8 @@ def api_transaction_get():
     username = get_jwt_identity()
     user = User.objects(username=username).first()
 
-    tx = Transaction.objects(id=transaction_id)
-    return jsonify(tx), 200
+#     tx = Transaction.objects(id=transaction_id)
+#     return jsonify(tx), 200
 
 
 @app.route('/api/v1/statistics/get', methods=['GET'])

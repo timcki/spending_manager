@@ -3,14 +3,18 @@ import { AsyncPaginate } from 'react-select-async-paginate';
 import { AppContext } from './../store/AppContext';
 import api from './../utils/api';
 
-const options = [
-	{ value: 'Zakupy', label: 'zakupy' },
-	{ value: 'Transport', label: 'transport' },
-	{ value: 'Rachunki', label: 'rachunki' },
-];
+// const options = [
+	// 	{ value: 'Zakupy', label: 'zakupy' },
+	// 	{ value: 'Transport', label: 'transport' },
+	// 	{ value: 'Rachunki', label: 'rachunki' },
+	// ];
+	
+	const AsyncSelect = props => {
 
-const AsyncSelect = props => {
-	async function loadOptions(search, loadedOptions, { page }) {
+		const { value, onchange, name, label, placeholder } = props;
+		const { getCsrfToken,currentAccount } = useContext(AppContext);
+
+		async function loadOptions(search, loadedOptions, { page }) {
 		if (props.type === 'categories') {
 			const res = await api.get('/api/v1/categories/get', {
 				headers: {
@@ -24,12 +28,13 @@ const AsyncSelect = props => {
 				label: el.name,
 			}));
 			console.log(categoriesNames);
-
-			const hasMore = categoriesNames.length > loadedOptions.length;
-			const slicedOptions = categoriesNames.slice(
-				loadedOptions.length - 3,
-				loadedOptions.length,
-			);
+			// const hasMore = categoriesNames.length > loadedOptions.length;
+			// const slicedOptions = categoriesNames.slice(
+			// 	loadedOptions.length - 3,
+			// 	loadedOptions.length,
+			// );
+			const hasMore = false;
+			const slicedOptions = categoriesNames;
 			return {
 				options: slicedOptions,
 				hasMore: hasMore,
@@ -48,13 +53,16 @@ const AsyncSelect = props => {
 				label: el.name,
 				value: Object.values(el._id)[0],
 			}));
-			console.log(accountNames);
+			
+			const newAccountNames=accountNames.filter(el=>el.label!==currentAccount.name)
 
-			const hasMore = accountNames.length > loadedOptions.length;
-			const slicedOptions = accountNames.slice(
-				loadedOptions.length - 3,
-				loadedOptions.length,
-			);
+			// const hasMore = accountNames.length > loadedOptions.length;
+			// const slicedOptions = accountNames.slice(
+			// 	loadedOptions.length,
+			// 	loadedOptions.length+1,
+			// );
+			const hasMore = false;
+			const slicedOptions = newAccountNames;
 			return {
 				options: slicedOptions,
 				hasMore: hasMore,
@@ -65,8 +73,6 @@ const AsyncSelect = props => {
 		}
 	}
 
-	const { value, onchange, name, label, placeholder } = props;
-	const { getCsrfToken } = useContext(AppContext);
 
 	return (
 		<>
@@ -74,7 +80,7 @@ const AsyncSelect = props => {
 			<AsyncPaginate
 				name={name}
 				placeholder={placeholder}
-				defaultOptions={options}
+				// defaultOptions={options}
 				// options={options}
 				loadOptions={loadOptions}
 				value={value}

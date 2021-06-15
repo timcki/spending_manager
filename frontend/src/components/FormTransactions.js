@@ -157,36 +157,31 @@ const FormTransactions = ({
 	const handleSubmit = e => {
 		e.preventDefault();
 		let { correct, ...valid } = validationFun();
-		if (currentAccount != null) {
-			const payload = {
-				account_id: currentAccount._id.$oid,
-				amount: amount,
-				transaction_type: selectType.value,
-				category_id: selectCategory.value,
-				transaction_date: date,
-				recipient: description,
-				transaction_id: id,
-			};
-			if (correct) {
-				api.post(url, payload, {
-					headers: {
-						'X-CSRF-TOKEN': `${getCsrfToken()}`,
-						'Content-Type': 'application/json',
-					},
+
+
+		const payload = {
+			account_id: currentAccount._id.$oid,
+			amount: amount,
+			transaction_type: selectType.value,
+			category_id: selectCategory.value,
+			transaction_date: date,
+			recipient: description,
+			transaction_id: id,
+		};
+if (correct) {
+			api.post(url, payload, {
+				headers: {
+					'X-CSRF-TOKEN': `${getCsrfToken()}`,
+					'Content-Type': 'application/json',
+				},
+			})
+				.then(response => {
+					if (response.status === 200) {
+						console.log(response);
+						setCurrentAccount(response.data);
+					}
 				})
-					.then(response => {
-						if (response.status === 200) {
-							console.log(response);
-							setCurrentAccount(response.data);
-						}
-					})
-					.then(response => {
-						if (response.status === 200) {
-							console.log(response);
-							setCurrentAccount(response.data);
-						}
-					})
-					.catch(err => {});
+				.catch(err => {});
 
 				setDate(new Date());
 				setAmount(0);
@@ -284,7 +279,7 @@ const FormTransactions = ({
 						)}
 					</div>
 					<div className="save-transaction">
-						<button>Zapisz</button>
+						<button disabled={currentAccount?false:true}>Zapisz</button>
 					</div>
 				</div>
 			</form>

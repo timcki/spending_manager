@@ -13,6 +13,11 @@ const transaction_types = {
 };
 
 const TransactionUpdate = ({ match, location }) => {
+
+	console.log("terasxax")
+	console.log(location.state)
+
+	const other_account_id =location.state.other_account_id?Object.values(location.state.other_account_id)[0]:null;
 	let updateForm = null;
 	if (
 		location.state.transaction_type === 1 ||
@@ -34,10 +39,11 @@ const TransactionUpdate = ({ match, location }) => {
 				}}
 				p_description={location.state.recipient}
 				p_selectPeriod={location.state.cyclic_period}
-				p_targetAccount={{
-					value: Object.values(location.state.other_account_id)[0],
-					label: Object.values(location.state.other_account_id)[0],
-				}}
+				// p_targetAccount={{
+				// 	// value: other_account_id,
+				// 	value: 123132,
+				// 	label: "other_account_id"
+				// }}
 				p_id={location.state.transaction_id}
 				url="/api/v1/transactions/update"
 			/>
@@ -60,7 +66,12 @@ const TransactionUpdate = ({ match, location }) => {
 				}}
 				p_description={location.state.recipient}
 				p_selectPeriod={location.state.cyclic_period}
-				p_targetAccount={location.state.other_account_id}
+				// p_targetAccount={location.state.other_account_id}
+				p_targetAccount={{
+					value: other_account_id,
+					label: location.state.other_account_name
+
+				}}
 				p_id={location.state.transaction_id}
 				url="/api/v1/transactions/update"
 			/>

@@ -20,6 +20,7 @@ const TransactionCard = ({
 	id,
 	deleteFun,
 	other_account_id,
+	other_account_name,
 	cyclic_period,
 }) => {
 	const date = new Date(Object.values(transaction_date)[0]);
@@ -29,7 +30,8 @@ const TransactionCard = ({
 		month: 'short',
 		year: 'numeric',
 	});
-
+	console.log("jestem")
+	console.log(other_account_id)
 	let type_name = transaction_types[transaction_type];
 
 	let amountClasses = '';
@@ -70,6 +72,7 @@ const TransactionCard = ({
 									transaction_date: transaction_date,
 									transaction_id: id,
 									other_account_id: other_account_id,
+									other_account_name: other_account_name,
 									cyclic_period: cyclic_period,
 								},
 							}}>

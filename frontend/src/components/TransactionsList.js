@@ -3,6 +3,7 @@ import Paginate from './Paginate';
 import TransactionCard from './TransactionCard';
 import api from '../utils/api';
 import { AppContext } from './../store/AppContext';
+import '../styles/transactionList.css';
 
 const TransactionsList = ({
 	data,
@@ -46,21 +47,23 @@ const TransactionsList = ({
 		/>
 	));
 	return (
-		<ul>
+		<>
 			{loading ? (
 				<h3>Loading...</h3>
 			) : (
-				<div>
-					{actual}
-					<Paginate
-						amountOnPage={amountOnPage}
-						totalAmount={totalAmount}
-						onclick={onclick}
-						page={page}
-					/>
+				<div className="transaction-list">
+					<div className="transaction-content">{actual}</div>
+					<div className="transaction-pagination">
+						<Paginate
+							amountOnPage={amountOnPage}
+							totalAmount={totalAmount}
+							onclick={onclick}
+							page={page}
+						/>
+					</div>
 				</div>
 			)}
-		</ul>
+		</>
 	);
 };
 
