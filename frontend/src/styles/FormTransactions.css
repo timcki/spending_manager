@@ -1,0 +1,130 @@
+.form-transactions {
+    font-size: 18px;
+}
+.form-transactions .date-transactions {
+    margin:10px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.form-transactions .date-transactions > div{
+    width:40%;
+}
+.form-transactions .date-transactions label{
+    font-weight: bold;
+    padding:1px 2px;
+    width:100%;
+    text-align: left;
+}
+.form-transactions .date-transactions .react-datepicker-wrapper{
+    width:100%;
+}
+.form-transactions .date-transactions .react-datepicker__input-container{
+    width:100%;
+}
+.form-transactions .date-transactions input{
+    width:100%;
+    padding: 5px;
+    border-radius: 5px;
+    border-color: #ccc;
+    border-width: 1px;
+}
+.form-transactions .date-transactions input:focus{
+    outline-color: #0d6efd;
+}
+
+
+/* Category */
+
+.form-transactions .category-transactions{
+    margin:10px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.form-transactions .category-transactions label{
+    width:40%;
+    font-weight: bold;
+    padding:1px 2px;
+    text-align: left;
+}
+.form-transactions .category-transactions .css-2b097c-container{
+    width:40%;
+}
+
+/* Transactions */
+
+.form-transactions .type-transactions{
+    margin:10px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.form-transactions .type-transactions label{
+    width:40%;
+    font-weight: bold;
+    padding:1px 2px;
+    text-align: left;
+}
+.form-transactions .type-transactions .css-2b097c-container{
+    width:40%;
+}
+
+/* Description */
+
+.form-transactions .description-transactions{
+    margin:10px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.form-transactions .description-transactions label{
+    width:40%;
+    font-weight: bold;
+    padding:1px 2px;
+    text-align: left;
+}
+.form-transactions .description-transactions input{
+    width:40%;
+    padding: 5px;
+    border-radius: 5px;
+    border-color: #ccc;
+    border-width: 1px;
+}
+.form-transactions .description-transactions input:focus{
+    outline-color: #0d6efd;
+}
+
+/* button */
+.form-transactions .save-transaction{
+    text-align: center;
+}
+.form-transactions .save-transaction button{
+    margin-top:10px;
+    padding: 5px 50px;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color:white;
+    background-color: rgb(14, 129, 58);
+    border-color:rgb(7, 110, 48);
+}
+.form-transactions .save-transaction button:active{
+    transform: scale(0.98);
+    background-color: rgb(46, 145, 62);
+}
+
+/* Errors */
+
+.form-transactions .error-transactions{
+    font-size:12px;
+    color:red;
+}
+
+.form-transactions .move-inputs{
+    transition: 2s display;
+}

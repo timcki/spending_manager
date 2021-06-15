@@ -1,38 +1,36 @@
-import React, { useState } from 'react';
+import React, {useContext} from 'react';
 import Input from '../components/Input';
-import axios from 'axios';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import '../styles/SignUpForm.css';
 
+import {AppContext} from "../store/AppContext";
+
+
 const SignUpForm = () => {
+	
+	const {signUpOnClickHandler} = useContext(AppContext);
+	
 	const signUpMetaData = [
 		{
 			name: 'username',
+			key: 'username',
 			type: 'text',
 			placeholder: 'Nazwa użytkownika',
 		},
 		{
 			name: 'password',
+			key: 'password',
 			type: 'password',
 			placeholder: 'Hasło',
 		},
 		{
 			name: 'confirmPassword',
+			key: 'confirmPassword',
 			type: 'password',
 			placeholder: 'Powtórz hasło',
 		},
 	];
-
-	const signUpOnClickHandler = (payload, setSubmitting) => {
-		axios
-			.post('http://localhost:5000/api/v1/registration', payload)
-			.then(response => {
-				//steSubmitting(false);
-				console.log(response);
-			})
-			.catch(err => {});
-	};
 
 	return (
 		<div className="signup-container">
@@ -59,7 +57,7 @@ const SignUpForm = () => {
 						.required('Pole wymagane'),
 				})}
 				onSubmit={(values, { setSubmitting }) =>
-					signUpOnClickHandler(values, { setSubmitting })
+					signUpOnClickHandler(values, setSubmitting)
 				}
 				validateOnBlur={false}>
 				{formik => {
@@ -69,7 +67,7 @@ const SignUpForm = () => {
 								<Input {...data} />
 							))}
 							<button
-								class="login-button"
+								className="login-button"
 								type="submit"
 								disabled={formik.isSubmitting}>
 								Zarejestruj się
@@ -82,6 +80,4 @@ const SignUpForm = () => {
 	);
 };
 
-
 export default SignUpForm;
-

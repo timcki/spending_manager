@@ -1,20 +1,23 @@
-.login-container .input-container input{
-    padding:5px 8px;
-    width:60%;
+.login-container .input-container input {
+	padding: 5px 8px;
+	width: 60%;
 }
-.login-container .input-container{
-    height:60px; 
+.login-container .input-container {
+	height: 60px;
 }
-.login-container .input-container .error{
-    color:red;
-    font-size: 12px;
+.login-container .input-container .error {
+	color: red;
+	font-size: 12px;
 }
 
-.login-container .login-button{
-    margin-top:5px;
-    color:white;
-    background-color:rgb(76, 100, 194);
-    padding: 4px 10px;
-    border-radius:5px;
-    cursor:pointer;
+.login-container .login-button {
+	color: white;
+	background-color: rgb(76, 100, 194);
+	padding: 4px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.login-button:disabled {
+	background-color: rgb(194, 76, 76);
 }

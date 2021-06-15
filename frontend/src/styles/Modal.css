@@ -1,0 +1,28 @@
+.modal-container{
+    font-size:16px;
+}
+.modal-container h2{
+    font-size: 24px;
+}
+.modal-container h2.negat{
+    color: #f00;
+}
+.modal-container h2.posit{
+    color: rgb(23, 119, 23);
+}
+.modal-content{
+    border:none;
+    padding:10px;
+}
+.modal-container-button{
+    text-align: center;
+    font-size: 16px;
+}
+.modal-button{
+    margin:20px auto 0;
+    background-color: rgb(243, 61, 61);
+    font-weight: 500;
+    letter-spacing: 1px;
+    border-color:rgb(102, 40, 40);
+    padding:5px 15px;
+}

@@ -1,0 +1,32 @@
+.account-nav ul{
+    list-style: none;
+    display: flex;
+    background-color: rgb(59, 111, 128);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.account-nav ul li a{
+    display: block;
+    text-decoration: none;
+    text-transform: none;
+    color:black;
+    padding: 5px 15px;
+    background-color: rgb(26, 165, 119);
+    margin:0 10px;
+    font-weight: bold;
+    border-radius: 10px;
+    border:1px solid black;
+}
+.account-nav ul li a:active{
+    transform: scale(0.98);
+}
+.account-nav ul li a:hover{
+    background-color: rgb(31, 192, 139);
+}
+.account-nav ul li a.active{
+    background-color: rgb(94, 224, 181);
+}
+.account-nav ul li:last-child{
+    order:-1;
+}

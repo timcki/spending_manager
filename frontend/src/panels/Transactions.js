@@ -1,8 +1,12 @@
 import React from 'react';
+import FormTransactions from '../components/FormTransactions';
 
 const Transactions = ()=>{
     return(
-        <div>Transactions</div>
+        <div>
+            <h2>Dodaj transakcje</h2>
+            <FormTransactions/>
+        </div>
     )
 }
 

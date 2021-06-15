@@ -1,13 +1,15 @@
-import Home from './first_page/Home';
-import Main from './main_page/Main';
+import { React} from 'react';
+import AppProvider from "./store/AppContext";
+import Routes from "./components/Routes";
 
-function App() {
-	return (
-		<div className="App">
-			<Home />
-			{/* 			{<Main />} */}
-		</div>
+const App = props => {
+	return( 
+		<AppProvider>
+			<div className="App">			
+				<Routes/>
+			</div>
+		</AppProvider>
 	);
-}
+};
 
 export default App;
