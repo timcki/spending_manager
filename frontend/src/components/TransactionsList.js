@@ -36,12 +36,6 @@ const TransactionsList = ({
 	};
 	console.log(data);
 	const actual = data.map((transaction, index) => (
-		// <li key ={transaction.id}>
-		//     <Link to={`/history/${transaction.id}`}>
-		//     {transaction.name}
-		//     </Link>
-		// </li>
-		// <TransactionCard key={index} id={index + 1} {...transaction} deleteFun={()=>deleteTransaction(Object.values(transaction._id)[0])} />
 		<TransactionCard
 			key={index}
 			id={Object.values(transaction._id)[0]}
@@ -50,9 +44,6 @@ const TransactionsList = ({
 				deleteTransaction(Object.values(transaction._id)[0])
 			}
 		/>
-		/* <Link to={`/history/${transaction.id}`}>
-            {transaction.name}
-            </Link> */
 	));
 	return (
 		<ul>

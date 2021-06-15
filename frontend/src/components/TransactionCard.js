@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 const transaction_types = {
 	1: 'wydatek',
 	2: 'przychód',
+	3: 'przelew',
 };
 
 const TransactionCard = ({
@@ -18,6 +19,8 @@ const TransactionCard = ({
 	transaction_date,
 	id,
 	deleteFun,
+	other_account_id,
+	cyclic_period,
 }) => {
 	const date = new Date(Object.values(transaction_date)[0]);
 
@@ -25,15 +28,13 @@ const TransactionCard = ({
 		day: 'numeric',
 		month: 'short',
 		year: 'numeric',
-		hour: 'numeric',
-		minute: '2-digit',
 	});
 
 	let type_name = transaction_types[transaction_type];
 
 	let amountClasses = '';
 	let idClasses = ['transaction-id'];
-	if (transaction_type == 1) {
+	if (transaction_type == 1 || transaction_type == 3) {
 		amountClasses = 'negative';
 		idClasses.push('negative');
 	} else if (transaction_type == 2) {
@@ -67,7 +68,9 @@ const TransactionCard = ({
 									recipient: recipient,
 									amount: amount,
 									transaction_date: transaction_date,
-									transaction_id: id
+									transaction_id: id,
+									other_account_id: other_account_id,
+									cyclic_period: cyclic_period,
 								},
 							}}>
 							{<PencilSquare className="icons update-icon" />}
