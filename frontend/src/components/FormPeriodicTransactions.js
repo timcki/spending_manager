@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import InputNormal from '../components/InputNormal';
+import InputNormal from './InputNormal';
 
-import DatePicker from '../components/DatePicker';
-import InputCalculator from '../components/InputCalculator';
-import AsyncSelect from '../components/AsyncSelect';
-import Select from '../components/Select';
+import DatePicker from './DatePicker';
+import InputCalculator from './InputCalculator';
+import AsyncSelect from './AsyncSelect';
+import Select from './Select';
 import '../styles/FormTransactions.css';
 import api from '../utils/api';
 import { AppContext } from '../store/AppContext';
@@ -12,7 +12,7 @@ import { AppContext } from '../store/AppContext';
 const dataTransaction = {
 	date: {
 		name: 'date',
-		label: 'Data transakcji',
+		label: 'Data pierwszej transakcji',
 	},
 	category: {
 		name: 'category',
@@ -30,6 +30,11 @@ const dataTransaction = {
 		type: 'text',
 		placeholder: 'np. Zakupy w sklepie itp.',
 	},
+	period: {
+		name: 'type',
+		label: 'Częstotliwość co',
+		placeholder: 'Wybierz',
+	},
 };
 const messages = {
 	date: 'Musisz wybrać date',
@@ -43,6 +48,7 @@ const FormTransactions = ({
 	p_amount = 0,
 	p_date = new Date(),
 	p_selectCategory = '',
+	p_selectPeriod = '',
 	p_selectType = '',
 	p_description = '',
 	p_id = '',
@@ -53,16 +59,11 @@ const FormTransactions = ({
 
 	const [date, setDate] = useState(p_date);
 	const [selectCategory, setSelectCategory] = useState(p_selectCategory);
+	const [selectPeriod, setSelectPeriod] = useState(p_selectPeriod);
 	const [selectType, setSelectType] = useState(p_selectType);
 	const [description, setDescription] = useState(p_description);
 	const [amount, setAmount] = useState(p_amount);
 	const [id, setId] = useState(p_id);
-
-	const [isOpen,setIsOpen] = useState(false);
-	const [modalContent,setModalContent] = useState({
-		"header":"Błąd",
-		"content":"Problem z działaniem aplikacji"
-	});
 
 	const [category, setCategory] = useState([]);
 
@@ -99,6 +100,10 @@ const FormTransactions = ({
 
 	const handleSelectCategory = selectCategory => {
 		setSelectCategory(selectCategory);
+	};
+
+	const handleSelectPeriod = selectPeriod => {
+		setSelectPeriod(selectPeriod);
 	};
 
 	const handleSelectType = selectType => {
@@ -157,16 +162,7 @@ const FormTransactions = ({
 	const handleSubmit = e => {
 		e.preventDefault();
 		let { correct, ...valid } = validationFun();
-		if(currentAccount != null){
-			const payload = {
-				account_id: currentAccount._id.$oid,
-				amount: amount,
-				transaction_type: selectType.value,
-				category_id: selectCategory.value,
-				transaction_date: date,
-				recipient: description,
-				transaction_id: id,
-			};
+
 		const payload = {
 			account_id: currentAccount._id.$oid,
 			amount: amount,
@@ -175,6 +171,7 @@ const FormTransactions = ({
 			transaction_date: date,
 			recipient: description,
 			transaction_id: id,
+			cyclic_period: selectPeriod.label,
 		};
 		if (correct) {
 			api.post(url, payload, {
@@ -185,40 +182,29 @@ const FormTransactions = ({
 			})
 				.then(response => {
 					if (response.status === 200) {
-						console.log(response);
 						setCurrentAccount(response.data);
 					}
 				})
-					.then(response => {
-						if (response.status === 200) {
-							console.log(response);
-							setCurrentAccount(response.data);
-						}
-					})
-					.catch(err => {});
+				.catch(err => {});
 
-				setDate(new Date());
-				setAmount(0);
-				setDescription('');
-				setSelectCategory('');
-				setSelectType('');
+			setDate(new Date());
+			setAmount(0);
+			setDescription('');
+			setSelectCategory('');
+			setSelectType('');
 
-				setErrors({
-					date: false,
-					category: false,
-					type: false,
-					description: false,
-					amount: false,
-					openCalculator: false,
-				});
-			} else {
-				setErrors({
-					...valid,
-				});
-			}
-
-		}else{
-			alert("Prosze najpierw wprowadzic konto!");
+			setErrors({
+				date: false,
+				category: false,
+				type: false,
+				description: false,
+				amount: false,
+				openCalculator: false,
+			});
+		} else {
+			setErrors({
+				...valid,
+			});
 		}
 	};
 	return (
@@ -252,6 +238,19 @@ const FormTransactions = ({
 						{errors.date && (
 							<div className="error-transactions">
 								{messages.date}
+							</div>
+						)}
+					</div>
+					<div className="period-transactions">
+						<Select
+							type={'period'}
+							value={selectPeriod}
+							onchange={handleSelectPeriod}
+							{...dataTransaction.period}
+						/>
+						{errors.period && (
+							<div className="error-transactions">
+								{messages.period}
 							</div>
 						)}
 					</div>

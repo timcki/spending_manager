@@ -13,7 +13,7 @@ class TransactionType(IntEnum):
 class User(db.Document):
     username = db.StringField()
     password = db.StringField()
-    main_account_id = db.ObjectIdField()
+    main_account_id=db.ObjectIdField()
 
 
 class Transaction(db.Document):

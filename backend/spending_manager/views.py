@@ -101,8 +101,8 @@ def api_transactions_create():
         transaction_type = int(request.json.get("transaction_type", None))
         transaction_date = dateutil.parser.parse(request.json.get("transaction_date", None))
         transaction_status = make_transaction_status(transaction_date)
-        # other_account_id = request.json.get("other_account_id", None)
-        other_account_id = ObjectId("60b6980f0dac384440439a77")
+        other_account_id = request.json.get("other_account_id", None)
+        #other_account_id = ObjectId("60b6980f0dac384440439a77")
         # TODO: Transaction(**request.json).save()
         Transaction(account_id=account_id,
                     amount=amount,
