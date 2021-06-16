@@ -5,13 +5,19 @@ from flask_cors import CORS
 # from flask_restful import Api, Resource
 # import json
 import datetime
+import os
 app = Flask(__name__)
 
 # Setup the Flask-JWT-Extended extension
+mongo_host = 'mongo'
+mongo_db = 'spending_manager'
+if os.environ.get('UNITTEST') == 'TRUE':
+    mongo_host = 'localhost'
+    mongo_db = 'spending_manager_test'
 app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this "super secret" with something else!
 app.config['MONGODB_SETTINGS'] = {
-    'db': 'spending_manager',
-    'host': 'mongo',
+    'db': mongo_db,
+    'host': mongo_host,
     'port': 27017,
     'username': 'user',
     'password': 'password',

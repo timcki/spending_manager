@@ -155,7 +155,7 @@ def api_statistics_get():
         month = transaction.transaction_date.month
         year = transaction.transaction_date.year
         amount = transaction.amount
-        month_year = str(month)+"-"+str(year)
+        month_year = f"{month}-{year}"
         if month_year in stats:
             if transaction.transaction_type == 1:
                 stats[month_year]["expense"] += amount
