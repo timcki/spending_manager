@@ -21,7 +21,7 @@ def api_transactions_create():
         recipient = request.json.get("recipient", None)
         transaction_type = int(request.json.get("transaction_type", None))
         transaction_date = dateutil.parser.parse(request.json.get("transaction_date", None))
-        transaction_status = make_transaction_status(transaction_date)
+        transaction_status = utility.make_transaction_status(transaction_date)
         other_account_id = request.json.get("other_account_id", None)
         other_account_name = request.json.get("other_account_name", None)
         cyclic_period = request.json.get("cyclic_period", None)
