@@ -6,15 +6,18 @@ from flask_cors import CORS
 # import json
 import datetime
 import os
+import string, random
+
+
 app = Flask(__name__)
 
 # Setup the Flask-JWT-Extended extension
 mongo_host = 'mongo'
 mongo_db = 'spending_manager'
-if os.environ.get('UNITTEST') == 'TRUE':
+if os.environ.get('UNITTEST') is not None:
     mongo_host = 'localhost'
-    mongo_db = 'spending_manager_test'
-app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this "super secret" with something else!
+    mongo_db = 'spending_manager_test_'+os.environ.get('UNITTEST')
+app.config["JWT_SECRET_KEY"] = "super-secret"
 app.config['MONGODB_SETTINGS'] = {
     'db': mongo_db,
     'host': mongo_host,
@@ -37,7 +40,8 @@ db = MongoEngine(app)
 cors = CORS(app, supports_credentials=True)
 
 blocklisted = {}
-# jwt._set_error_handler_callbacks(app)
 
 import spending_manager.views
 import spending_manager.models
+import spending_manager.auth
+import spending_manager.utility
