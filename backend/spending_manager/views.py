@@ -132,10 +132,10 @@ def api_transactions_update():
         recipient = request.json.get("recipient", None)
 
         tx = Transaction.objects(id=transaction_id).first()
-        before_update_data = get_transaction_data(tx)
+        before_update_data = utility.get_transaction_data(tx)
         tx.update(id=transaction_id, amount=amount, transaction_date=transaction_date, category_id=category_id,
                   transaction_type=transaction_type, recipient=recipient)
-        after_update_data = get_transaction_data(Transaction.objects(id=transaction_id).first())
+        after_update_data = utility.get_transaction_data(Transaction.objects(id=transaction_id).first())
         utility.update_balance_on_update(before_update_data, after_update_data)
 
         username = get_jwt_identity()
@@ -152,7 +152,7 @@ def api_transactions_delete():
     if request.is_json:
         transaction_id = request.json.get("transaction_id", None)
         tx = Transaction.objects(id=transaction_id).first()
-        before_delete_data = get_transaction_data(tx)
+        before_delete_data = utility.get_transaction_data(tx)
         tx.delete()
         utility.update_balance_on_delete(before_delete_data)
         username = get_jwt_identity()
