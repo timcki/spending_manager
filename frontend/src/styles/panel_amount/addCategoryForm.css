@@ -1,0 +1,46 @@
+.form-add-category h1{
+    font-size: 28px;
+    margin-bottom: 60px;
+}
+.form-add-category .name-category {
+	margin: 10px 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.form-add-category .name-category label {
+	width: 40%;
+    font-size: 18px;
+	font-weight: bold;
+	padding: 1px 2px;
+	text-align: left;
+}
+.form-add-category .name-category input {
+	width: 40%;
+    padding:5px 10px;
+}
+
+/* button */
+.form-add-category .save-add-category {
+	text-align: center;
+}
+.form-add-category .save-add-category button {
+	margin-top: 15px;
+	padding: 5px 50px;
+	font-size: 20px;
+	letter-spacing: 1px;
+	color: white;
+	background-color: rgb(14, 129, 58);
+	border-color: rgb(7, 110, 48);
+}
+.form-add-category .save-add-category button:active {
+	transform: scale(0.98);
+	background-color: rgb(46, 145, 62);
+}
+
+
+.form-add-category .error-add-category {
+	font-size: 12px;
+	color: red;
+}

@@ -17,6 +17,7 @@
 .main-container main {
 	/* flex-grow: 1; */
 	/* flex-basis: 80%; */
+	position: relative;
 	margin-left:20vw;
 	flex-basis: 80vw;
 	display: flex;

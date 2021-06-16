@@ -1,22 +1,30 @@
-.category-card-wrapper{
-    display: flex;
-    justify-content: center;
+.category-card-wrapper {
+	display: flex;
+	justify-content: center;
+	line-height: 36px;
 }
-.category-card-wrapper .category-card{
-    display: flex;
-    width:30%;
-    background-color: rgba(238, 213, 75, 0.76);
-    justify-content: space-between;
-    align-items: center;
-    padding:5px 20px;
-    margin:5px 0;
-    border-radius: 10px;
+.category-card-wrapper .category-card {
+	font-family: 'Poppins', sans-serif;
+	display: flex;
+	width: 30%;
+	background-color: rgb(224, 224, 224);
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.7rem 1.5rem 0.7rem 2rem;
+	margin: 0.7rem 0;
+	border: 1px solid black;
+	border-radius: 10px;
 }
-.category-card-wrapper .category-card .category-name{
-    margin-right:50px;
+.category-card-wrapper .category-card .category-name {
+	margin-right: 50px;
 }
-.category-card-wrapper .category-card .delete-icon{
-    color: red;
-    height:30px;
-    width:30px;
+.category-card-wrapper .category-card .delete-icon {
+	color: red;
+	cursor: pointer;
+	height: 30px;
+	width: 30px;
+}
+.category-card-wrapper .category-card .delete-icon:hover {
+	height: 32px;
+	width: 32px;
 }

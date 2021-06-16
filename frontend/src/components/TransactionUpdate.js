@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import FormTransactions from './FormTransactions';
 import FormPeriodicTransactions from './FormPeriodicTransactions';
 import FormTransfer from './FormTransfer';
-
+import '../styles/transactionUpdate.css'
 const transaction_types = {
 	1: 'wydatek',
 	2: 'przychód',
@@ -80,12 +80,14 @@ const TransactionUpdate = ({ match, location }) => {
 
 	return (
 		<>
-			<div> Aktualizacja transakcji</div>
+		<div className="transactions-update">
+			<h1 className="transactions-update-header"> Aktualizacja transakcji</h1>
 			{updateForm}
 
-			<br />
-			<br />
+			<button className="transactions-update-button">
 			<Link to="/history">Powrót do Transakcji</Link>
+			</button>
+		</div>
 		</>
 	);
 };

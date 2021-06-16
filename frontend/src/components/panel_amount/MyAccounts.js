@@ -14,18 +14,13 @@ const MyAccounts = () => {
 	useEffect(() => {
 		const fetchAccounts = async () => {
 			setLoading(true);
-			api.get('/api/v1/accounts/get', {
+			const res = await api.get('/api/v1/accounts/get', {
 				headers: {
 					'X-CSRF-TOKEN': `${getCsrfToken()}`,
 					'Content-Type': 'application/json',
 				},
-			})
-				.then(res => {
-					setAccounts(res.data);
-					console.log(res.data);
-				})
-				.catch();
-
+			});
+			setAccounts(res.data);
 			setLoading(false);
 		};
 
@@ -49,6 +44,8 @@ const MyAccounts = () => {
 				totalAmount={accounts.length}
 				onclick={handleClickChangePage}
 				page={page}
+				accounts={accounts}
+				setAccounts={setAccounts}
 			/>
 		</>
 	);

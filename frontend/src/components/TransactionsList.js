@@ -13,6 +13,8 @@ const TransactionsList = ({
 	onclick,
 	page,
 	csrfToken,
+	allTransactions,
+	setTransactions
 }) => {
 	const [numberOfRecords, setNumberOfRecords] = useState(0);
 	const { currentAccount, getCsrfToken, setCurrentAccount } =
@@ -29,8 +31,9 @@ const TransactionsList = ({
 			.then(response => {
 				if (response.status === 200) {
 					console.log(response);
-					setCurrentAccount(response.data);
-					console.log('usunieto');
+					// setCurrentAccount(response.data);
+					const updateTransactions=allTransactions.filter(elem=>Object.values(elem._id)[0]!==id);
+					setTransactions(updateTransactions);
 				}
 			})
 			.catch(err => {});
@@ -52,7 +55,8 @@ const TransactionsList = ({
 				<h3>Loading...</h3>
 			) : (
 				<div className="transaction-list">
-					<div className="transaction-content">{actual}</div>
+					<div className="transaction-content">{actual.length?
+						actual:<h2>Obecnie nie masz żadnych zapisanych transakcji dla tego konta</h2>}</div>
 					<div className="transaction-pagination">
 						<Paginate
 							amountOnPage={amountOnPage}

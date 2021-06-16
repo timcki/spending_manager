@@ -1,0 +1,57 @@
+.stats-header{
+    text-align: center;
+    font-size: 28px;
+}
+.stats-header span{
+    color:rgb(216, 13, 165)
+}
+.stats-data-container h2{
+    text-align: center;
+    font-size: 22px;
+}
+table{
+    width:100%;
+    text-align: center;
+    border-collapse: collapse;
+}
+table .table-header{
+    width: 100%;
+}
+table .table-header th{
+    width: 100%;
+}
+table tr{
+    width:25%;
+}
+table tr td,th{
+    padding: 8px 2px;
+}
+table th{
+    width:25%;
+}
+table thead{
+    background-color: #b8bdbd;
+}
+tbody tr:nth-child(odd) {
+    background-color: #8bc2e7;
+  }
+  
+tbody tr:nth-child(even) {
+    background-color: #d0d8e7;
+}
+.part-best-and-chart{
+    display: flex;
+    justify-content: space-around;
+    margin: 30px 5px 10px;
+}
+.part-best{
+    width:40%;
+}
+.part-chart{
+    width:40%;
+}
+.part-best-and-chart p{
+    text-align: center;
+    padding: 5px;
+    font-size: 20px;
+}

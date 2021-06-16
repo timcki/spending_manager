@@ -5,6 +5,8 @@ import '../../styles/panel_amount/categoryList.css';
 import {AppContext} from "../../store/AppContext"
 import api from '../../utils/api'
 const CategoryList = ({
+	setModalData,
+	setIsOpenModal,
 	data,
 	loading,
 	amountOnPage,
@@ -37,13 +39,14 @@ const CategoryList = ({
 		})
 			.then(response => {
 				if (response.status === 200) {
-					console.log(response);
-					console.log('usunieto');
-					console.log(allCategory)
-					updateCategory=allCategory.filter(elem=>Object.values(elem._id)[0]!==id);
-					console.log("updateCategory")
-					console.log(updateCategory)
+					updateCategory=allCategory.filter(elem=>Object.values(elem._id)[0]!==id)
 					manageCategory(updateCategory);
+					setModalData({
+						header:" Usunięto kategorie",
+						content:`Kategoria została usunięta`,
+						classes:"positive-info"
+					})
+					setIsOpenModal(true);
 				}
 			})
 			.catch(err => {});
