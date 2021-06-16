@@ -1,10 +1,10 @@
-import React,{useContext} from 'react';
+import React, { useContext } from 'react';
 import '../../styles/panel_amount/accountCard.css';
 import { Check, Trash } from 'react-bootstrap-icons';
 import { AppContext } from '../../store/AppContext';
 
-const AccountCard = ({ name, id, balance, clicked, isDefault, deleteFunc}) => {
-	const { currentAccount} = useContext(AppContext);
+const AccountCard = ({ name, id, balance, clicked, isDefault, deleteFunc }) => {
+	const { currentAccount } = useContext(AppContext);
 	let iconClassNames = ['icons', 'check-icon'];
 	let cardClassNames = ['account-card'];
 	if (isDefault === true) {
@@ -16,7 +16,9 @@ const AccountCard = ({ name, id, balance, clicked, isDefault, deleteFunc}) => {
 			<div className={cardClassNames.join(' ')}>
 				<div className="account-name">
 					<div className="account-name-value">{name}</div>
-					<div className="account-name-balance">{balance}PLN </div>
+					<div className="account-name-balance">
+						{balance.toFixed(2)}PLN{' '}
+					</div>
 				</div>
 				<div>
 					{
@@ -26,11 +28,20 @@ const AccountCard = ({ name, id, balance, clicked, isDefault, deleteFunc}) => {
 						/>
 					}
 				</div>
-				{console.log("marekds sadkdsakda")}
+				{console.log('marekds sadkdsakda')}
 				{console.log(Object.values(currentAccount._id)[0])}
 				{console.log(id)}
-			
-				{Object.values(currentAccount._id)[0]!==id && <div>{<Trash className="icons delete-icon" onClick={deleteFunc}/>}</div>}
+
+				{Object.values(currentAccount._id)[0] !== id && (
+					<div>
+						{
+							<Trash
+								className="icons delete-icon"
+								onClick={deleteFunc}
+							/>
+						}
+					</div>
+				)}
 			</div>
 		</div>
 	);
