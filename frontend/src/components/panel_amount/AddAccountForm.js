@@ -2,12 +2,14 @@ import React, { useContext, useState } from 'react';
 import InputNormal from '../InputNormal';
 import api from '../../utils/api';
 import { AppContext } from '../../store/AppContext';
+import '../../styles/panel_amount/addAccountForm.css';
 
 const dataAccount = {
 	accountName: {
 		name: 'accountName',
 		label: 'Nazwa konta',
 		type: 'text',
+		placeholder:'Wprowadź własną nazwę'
 	},
 	accountState: {
 		name: 'accountState',
@@ -21,7 +23,10 @@ const messages = {
 	accountState: 'Kwota musi być większa od zera',
 };
 
-const AddAccountForm = () => {
+const AddAccountForm = ({
+	setModalData,
+	setIsOpenModal
+	}) => {
 	const { getToken, getCsrfToken } =
 		useContext(AppContext);
 
@@ -89,6 +94,12 @@ const AddAccountForm = () => {
 			})
 				.then(response => {
 					console.log('Im here', response.data);
+					setModalData({
+						header:" Dodano nowe konto",
+						content:`Nazwa dodanego konta to ${accountName}`,
+						classes:"positive-info"
+					})
+					setIsOpenModal(true);
 					//setCurrentAccount(response.data);
 				})
 				.catch(err => {});
@@ -109,6 +120,7 @@ const AddAccountForm = () => {
 
 	return (
 		<div className="form-add-account">
+			<h1>Dodaj nowe konto:</h1>
 			<form onSubmit={handleSubmit} noValidate>
 				<div className="name-account">
 					<InputNormal

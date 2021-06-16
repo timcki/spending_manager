@@ -1,0 +1,25 @@
+.modal-info-container{
+    position: relative;
+    border-radius: 20px;
+    padding:0;
+    margin:0;
+}
+.modal-info-container .cross-icon{
+    position: absolute;
+    top:0;
+    right:0;
+    cursor:pointer;
+    transition: .3s;
+    color:rgb(250, 67, 67);
+}
+.modal-info-container .cross-icon:hover{
+    transform: rotate(90deg);
+}
+.positive-info{
+    font-size: 18px;
+    color:green;
+}
+.negative-info{
+    font-size: 18px;
+    color:red;
+}

@@ -40,6 +40,8 @@ const messages = {
 };
 
 const FormTransactions = ({
+	setModalData,
+	setIsOpenModal,
 	p_amount = 0,
 	p_date = new Date(),
 	p_selectCategory = '',
@@ -57,12 +59,6 @@ const FormTransactions = ({
 	const [description, setDescription] = useState(p_description);
 	const [amount, setAmount] = useState(p_amount);
 	const [id, setId] = useState(p_id);
-
-	const [isOpen, setIsOpen] = useState(false);
-	const [modalContent, setModalContent] = useState({
-		header: 'Błąd',
-		content: 'Problem z działaniem aplikacji',
-	});
 
 	const [category, setCategory] = useState([]);
 
@@ -178,6 +174,12 @@ const FormTransactions = ({
 					if (response.status === 200) {
 						console.log(response);
 						setCurrentAccount(response.data);
+						setModalData({
+							header:"Transakcja zapisana",
+							content:`Nazwa dodanej transakcji to ${description}`,
+							classes:"positive-info"
+						})
+						setIsOpenModal(true);
 					}
 				})
 				.catch(err => {});
@@ -276,9 +278,7 @@ const FormTransactions = ({
 						)}
 					</div>
 					<div className="save-transaction">
-						<button disabled={currentAccount ? false : true}>
-							Zapisz
-						</button>
+						<button disabled={currentAccount?false:true}>Zapisz</button>
 					</div>
 				</div>
 			</form>
