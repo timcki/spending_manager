@@ -198,7 +198,11 @@ def api_categories_delete():
         username = get_jwt_identity()
         user = User.objects(username=username).first()
         name = request.json.get("name", None)
-        category = Category.objects(name=name, user_id=user.id).first()
+        if name is None:
+            cid = request.json.get("category_id", None)
+            category = Category.objects(id=cid).first()
+        else:
+            category = Category.objects(name=name, user_id=user.id).first()
         if category is not None:
             if category.is_default:
                 return jsonify({"success": False, "mssg": "Nie możesz usunąć kategorii domyślnej"}), 400

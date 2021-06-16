@@ -1,16 +1,10 @@
 #! /bin/bash
 
 function rand-str {
-    # Return random alpha-numeric string of given LENGTH
-    #
-    # Usage: VALUE=$(rand-str $LENGTH)
-    #    or: VALUE=$(rand-str)
-
     local DEFAULT_LENGTH=64
     local LENGTH=${1:-$DEFAULT_LENGTH}
 
     tr -dc A-Za-z0-9 </dev/urandom | head -c $LENGTH
-    # -dc: delete complementary set == delete all except given set
 }
 
 export MONGO_RANDOM=$(rand-str 10)
