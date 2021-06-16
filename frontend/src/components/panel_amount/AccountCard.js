@@ -11,6 +11,11 @@ const AccountCard = ({ name, id, balance, clicked, isDefault, deleteFunc }) => {
 		iconClassNames.push('default');
 		cardClassNames.push('default');
 	}
+
+	let flag = true;
+	if (currentAccount) {
+		flag = Object.values(currentAccount._id)[0] !== id;
+	}
 	return (
 		<div key={id} className="account-card-wrapper">
 			<div className={cardClassNames.join(' ')}>
@@ -28,11 +33,8 @@ const AccountCard = ({ name, id, balance, clicked, isDefault, deleteFunc }) => {
 						/>
 					}
 				</div>
-				{console.log('marekds sadkdsakda')}
-				{console.log(Object.values(currentAccount._id)[0])}
-				{console.log(id)}
 
-				{Object.values(currentAccount._id)[0] !== id && (
+				{flag && (
 					<div>
 						{
 							<Trash
