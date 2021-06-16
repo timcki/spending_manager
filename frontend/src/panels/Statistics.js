@@ -15,7 +15,7 @@ const Statistics = ()=>{
           'Przelewy'
         ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Dataset amount',
           data: [statsData.expense_number, statsData.income_number, statsData.transfer_number],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -27,12 +27,12 @@ const Statistics = ()=>{
       };
 	const data_value = {
         labels: [
-          'Wydatki',
-          'Przychody',
-          'Przelewy'
-        ],
+            'Wydatki',
+            'Przychody',
+            'Przelewy'
+          ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Dataset Value',
           data: [statsData.expense_value, statsData.income_value, statsData.transfer_value],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -105,17 +105,17 @@ const Statistics = ()=>{
   }
 
     return(
-		<>
-      <h1 className="stats-header">Statystyki z obcecnego miesiąca tj. <span>{showCurrentMonthAndYear()}</span></h1>
+    <>
+      <h1 className="stats-header">Statystyki z obecnego miesiąca tj. <span>{showCurrentMonthAndYear()}</span></h1>
     	<div className="stats-data-container">
-            <h2>W tym miesiącu dodałeś już {statsData.number} transakcji</h2>
+            <h2>Ilość wszyskich dodanych transakcji: <strong>{statsData.number}</strong></h2>
             <table>
                 <thead>
                 <tr>
                     <th></th>
-                    <th>Ilość typów transakcji</th>
-                    <th>Procentowa ilość typów transakcji</th>
-                    <th>Wartość typów transakcji</th>
+                    <th>Ilość transakcji</th>
+                    <th>Procentowa ilość transakcji</th>
+                    <th>Wartość transakcji</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -142,20 +142,16 @@ const Statistics = ()=>{
         </div>
         <div className="part-best-and-chart">
             <div className="part-best">
+                <Pie data={data_amount}/>
                 <p>
-                    Ilośc dodanych przez Ciebie typów transakcji zaprezentowana na diagramie kołowym
+                    Ilość poszczególnych transakcji w obecnym miesiącu
                 </p>
             </div>
             <div className="part-chart">
-                <Pie data={data_amount}/>
-                <p>Diagram kołowy ilości dodanych typów transakcji</p>
-            </div>
-        </div>
-        <div className="part-best-and-chart">
-            <div className="part-chart">
                 <Pie data={data_value}/>
-            </div>
-            <div className="part-best">
+                <p>
+                    Wartość poszczególnych transakcji w obecnym miesiącu
+                </p>
             </div>
         </div>
 		</>

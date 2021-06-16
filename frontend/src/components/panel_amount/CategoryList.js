@@ -48,9 +48,6 @@ const CategoryList = ({
 					})
 					setIsOpenModal(true);
 				}
-				else if(response.status===409){
-
-				}
 			})
 			.catch(err => {});
 	};

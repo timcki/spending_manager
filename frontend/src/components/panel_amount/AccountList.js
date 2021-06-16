@@ -12,6 +12,8 @@ const AccountList = ({
 	totalAmount,
 	onclick,
 	page,
+	accounts,
+	setAccounts
 }) => {
 	const { currentAccount, getCsrfToken, setCurrentAccount } =
 		useContext(AppContext);
@@ -37,6 +39,32 @@ const AccountList = ({
 			.catch(err => {});
 	};
 
+	const deleteAccount = id => {
+		const payload = { account_id: id };
+		api.post('/api/v1/accounts/delete',payload, {
+			headers: {
+				'X-CSRF-TOKEN': `${getCsrfToken()}`,
+				'Content-Type': 'application/json',
+			},
+		})
+			.then(response => {
+				if (response.status === 200) {
+					console.log("abc123")
+					const updatedAccounts=accounts.filter(elem=>Object.values(elem._id)[0]!==id)
+					console.log(updatedAccounts)
+					setAccounts(updatedAccounts);
+
+					// setModalData({
+					// 	header:" Usunięto kategorie",
+					// 	content:`Konto została usunięta`,
+					// 	classes:"positive-info"
+					// })
+					// setIsOpenModal(true);
+				}
+			})
+			.catch(err => {});
+	};
+
 	const actual = data.map(temp => {
 		let isDefault = false;
 		if (currentAccount) {
@@ -53,6 +81,8 @@ const AccountList = ({
 				key={temp.name}
 				name={temp.name}
 				balance={temp.balance}
+				id={Object.values(temp._id)[0]}
+				deleteFunc={()=>deleteAccount(Object.values(temp._id)[0])}
 			/>
 		);
 	});

@@ -45,8 +45,13 @@ tbody tr:nth-child(even) {
     margin: 30px 5px 10px;
 }
 .part-best{
-    width:50%;
+    width:40%;
 }
 .part-chart{
-    width:30%;
+    width:40%;
+}
+.part-best-and-chart p{
+    text-align: center;
+    padding: 5px;
+    font-size: 20px;
 }

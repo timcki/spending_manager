@@ -24,7 +24,7 @@ const UserPanel = props => {
 							Bieżący stan konta
 						</p>
 						<p className="current-account-balance-value">
-							{currentAccount.balance} PLN
+							{currentAccount.balance.toFixed(2)} PLN
 						</p>
 					</div>
 				</div>

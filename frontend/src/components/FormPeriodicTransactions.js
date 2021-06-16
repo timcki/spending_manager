@@ -45,6 +45,8 @@ const messages = {
 };
 
 const FormTransactions = ({
+	setModalData,
+	setIsOpenModal,
 	p_amount = 0,
 	p_date = new Date(),
 	p_selectCategory = '',
@@ -183,6 +185,12 @@ const FormTransactions = ({
 				.then(response => {
 					if (response.status === 200) {
 						setCurrentAccount(response.data);
+						setModalData({
+							header:"Transakcja cykliczna",
+							content:`Dodano nową transakcje cykliczną`,
+							classes:"positive-info"
+						})
+						setIsOpenModal(true);
 					}
 				})
 				.catch(err => {});
