@@ -26,7 +26,8 @@ const Category = () => {
 
 		fetchCategory();
 	}, []);
-
+	console.log("test")
+	console.log(category)
 	const lastCategory = page * amountOnPage;
 	const firstCategory = lastCategory - amountOnPage;
 	const actualCategory = category.slice(firstCategory, lastCategory);
@@ -43,6 +44,8 @@ const Category = () => {
 				amountOnPage={amountOnPage}
 				totalAmount={category.length}
 				onclick={handleClickChangePage}
+				allCategory={category}
+				manageCategory={setCategory}
 				page={page}
 			/>
 			{/* <TransactionsList transactions={actualTransactions} loading={loading}/>

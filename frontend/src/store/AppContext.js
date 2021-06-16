@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { useCookies } from 'react-cookie';
 import { useHistory } from 'react-router';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 export const AppContext = React.createContext();
 
@@ -11,10 +11,10 @@ const AppProvider = ({ children }) => {
 	// const [token, setToken]=useState();
 	const [cookies, setCookie, removeCookie] = useCookies();
 	const [currentAccount, setCurrentAccount] = useState(null);
-	const [isOpen,setIsOpen] = useState(false);
-	const [modalContent,setModalContent] = useState({
-		"header":"Błąd",
-		"content":"Problem z działaniem aplikacji"
+	const [isOpen, setIsOpen] = useState(false);
+	const [modalContent, setModalContent] = useState({
+		header: 'Błąd',
+		content: 'Problem z działaniem aplikacji',
 	});
 	const history = useHistory();
 
@@ -45,21 +45,31 @@ const AppProvider = ({ children }) => {
 					setUser(response.data.username);
 					setCurrentAccount(response.data.account);
 					console.log(response);
-					history.push('/transactions');
+					history.push('/accounts');
 					return true;
 
 					// setIsAuthenticated(response.data.token !== null);
 				} else {
 					setModalContent({
-						"header":"Błąd logowania",
-						"content":"Zostały podane nieprawidłowe dane logowania. Sprawdź nazwę użytkownika i hasło"
-					})
+						header: 'Błąd logowania',
+						content:
+							'Nieprawidłowe dane logowania. Sprawdź hasło oraz nazwę użytkownika',
+					});
 					setIsOpen(true);
-					console.log("sdsdsada")
+					console.log('sdsdsada');
 					return false;
 				}
 			})
-			.catch(err => {});
+			.catch(err => {
+				//jeśli użytkownik istnieje, ale hasło jest złe to zwraca 403 Forbiden i trzeba to łapać w .catch'u
+				setModalContent({
+					header: 'Błąd logowania',
+					content:
+						'Nieprawidłowe dane logowania. Sprawdź hasło oraz nazwę użytkownika',
+				});
+				setIsOpen(true);
+				console.log('sdsdsada');
+			});
 	};
 
 	// if(!isLogin()){
@@ -72,17 +82,18 @@ const AppProvider = ({ children }) => {
 				console.log(response);
 				if (response.data.success) {
 					setModalContent({
-						"header":"Pomyślna rejestracja",
-						"content":"Udało Ci się zarejestrować. Przejdź do logowania.",
-						"type":true
-					})
+						header: 'Pomyślna rejestracja',
+						content:
+							'Udało Ci się zarejestrować. Przejdź do logowania.',
+						type: true,
+					});
 					setIsOpen(true);
 					return true;
 				} else {
 					setModalContent({
-						"header":"Błąd rejestracji",
-						"content":"Podana nazwa użytkownika jest już zajęta."
-					})
+						header: 'Błąd rejestracji',
+						content: 'Podana nazwa użytkownika jest już zajęta.',
+					});
 					setIsOpen(true);
 					return false;
 				}
@@ -97,7 +108,7 @@ const AppProvider = ({ children }) => {
 		// setToken(null);
 		removeCookie('token');
 		// history.push('/');
-		<Redirect to='/' />
+		<Redirect to="/" />;
 	};
 
 	const takeFromLocalStorage = () => {
@@ -120,7 +131,7 @@ const AppProvider = ({ children }) => {
 		setCurrentAccount,
 		isOpen,
 		setIsOpen,
-		modalContent
+		modalContent,
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

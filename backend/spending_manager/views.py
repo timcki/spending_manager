@@ -96,26 +96,53 @@ def api_registration():
 def api_transactions_create():
     if request.is_json:
         account_id = request.json.get('account_id', None)
-        # account_id = ObjectId("60b68dc85acd604ff41edfac") #account_id for already added account
         amount = float(request.json.get("amount", None))
+        category_id = request.json.get("category_id", None)
+        person = request.json.get("person", None)
+        recipient = request.json.get("recipient", None)
         transaction_type = int(request.json.get("transaction_type", None))
         transaction_date = dateutil.parser.parse(request.json.get("transaction_date", None))
         transaction_status = make_transaction_status(transaction_date)
-        # other_account_id = request.json.get("other_account_id", None)
-        other_account_id = ObjectId("60b6980f0dac384440439a77")
+        other_account_id = request.json.get("other_account_id", None)
+        other_account_name = request.json.get("other_account_name", None)
+        #other_account_id = ObjectId("60b6980f0dac384440439a77")
         # TODO: Transaction(**request.json).save()
+        cyclic_period = request.json.get("cyclic_period", None)
+
         Transaction(account_id=account_id,
                     amount=amount,
-                    category_id=request.json.get("category_id", None),
+                    category_id=category_id,
                     transaction_type=transaction_type,
                     other_account_id=other_account_id,
+                    other_account_name=other_account_name,
                     transaction_status=transaction_status,
-                    person=request.json.get("person", None),
-                    recipient=request.json.get("recipient", None),
+                    person=person,
+                    recipient=recipient,
                     transaction_date=transaction_date,
-                    cyclic_period=request.json.get("cyclic_period", None)
+                    cyclic_period=cyclic_period
                     ).save()
         update_balance_on_insert(account_id, transaction_type, amount, other_account_id, transaction_status)
+        # transakcje cykliczne jeśli cykl zaczyna sie dzis
+        if cyclic_period is not None and transaction_status == "executed":
+            delta = cyclic_period
+            if delta == "miesiąc":
+                transaction_date += relativedelta(months=1)
+            elif delta == "tydzień":
+                transaction_date += relativedelta(weeks=1)
+            elif delta == "dzień":
+                transaction_date += relativedelta(days=1)
+            Transaction(account_id=account_id,
+                        amount=amount,
+                        category_id=category_id,
+                        transaction_type=transaction_type,
+                        other_account_id=other_account_id,
+                        transaction_status="forthcoming",
+                        person=person,
+                        recipient=recipient,
+                        transaction_date=transaction_date,
+                        cyclic_period=cyclic_period
+                        ).save()
+
         account_data = Account.objects(id=account_id).first()
         return jsonify(account_data), 200
     return jsonify({"success": False}), 400
@@ -130,6 +157,13 @@ def api_transactions_get():
     tx = Transaction.objects(account_id=user.main_account_id)
     return jsonify(tx), 200
 
+# @app.route('/api/v1/transaction/get', methods=['GET'])
+# @jwt_required()
+# def api_transaction_get():
+#     # if request.is_json:
+#     transaction_id = request.args.get('transaction_id', None)
+#     username = get_jwt_identity()
+#     user = User.objects(username=username).first()
 
 @app.route('/api/v1/transaction/get', methods=['GET'])
 @jwt_required()
@@ -139,8 +173,8 @@ def api_transaction_get():
     username = get_jwt_identity()
     user = User.objects(username=username).first()
 
-    tx = Transaction.objects(id=transaction_id)
-    return jsonify(tx), 200
+#     tx = Transaction.objects(id=transaction_id)
+#     return jsonify(tx), 200
 
 
 @app.route('/api/v1/statistics/get', methods=['GET'])
@@ -236,8 +270,13 @@ def api_categories_create():
         user = User.objects(username=username).first()
         name = request.json.get("name", None)
         icon_colour = request.json.get("icon_colour", None)
-        Category(user_id=user.id, name=name, icon_colour=icon_colour, is_default=False).save()
-        return jsonify({"message": "Poprawnie dodano kategorie"}), 200
+        category = Category.objects(user_id=user.id, name=name).first()
+        if category is None:
+            Category(user_id=user.id, name=name, icon_colour=icon_colour, is_default=False).save()
+            return jsonify({"message": "Poprawnie dodano kategorie"}), 200
+        else:
+            return jsonify({"success": False, "message": "Kategoria o podanej nazwie już istnieje"}), 409
+
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 
@@ -411,32 +450,39 @@ def handle_forthcoming_transactions(username):
                 transaction.update(transaction_status="executed")
                 update_balance_on_insert(account_id, transaction.transaction_type, transaction.amount,
                                          transaction.other_account_id, "executed")
-                # while True:
-                #     transaction_date += relativedelta(months=1)
-                #     if transaction_date > datetime.now(transaction_date.tzinfo):
-                #         Transaction(account_id=account_id,
-                #                     amount=transaction.amount,
-                #                     category_id=transaction.category_id,
-                #                     transaction_type=transaction.transaction_type,
-                #                     other_account_id=transaction.other_account_id,
-                #                     transaction_status="forthcoming",
-                #                     person=transaction.person,
-                #                     recipient=transaction.recipient,
-                #                     transaction_date=transaction_date,
-                #                     cyclic_period=transaction.cyclic_period
-                #                     ).save()
-                #         break
-                #     else:
-                #         Transaction(account_id=account_id,
-                #                     amount=transaction.amount,
-                #                     category_id=transaction.category_id,
-                #                     transaction_type=transaction.transaction_type,
-                #                     other_account_id=transaction.other_account_id,
-                #                     transaction_status="executed",
-                #                     person=transaction.person,
-                #                     recipient=transaction.recipient,
-                #                     transaction_date=transaction_date,
-                #                     cyclic_period=transaction.cyclic_period
-                #                     ).save()
-                #         update_balance_on_insert(account_id, transaction.transaction_type, transaction.amount,
-                #                                  transaction.other_account_id, transaction_date)
+                if transaction.cyclic_period is not None:
+                    while True:
+                        delta = transaction.cyclic_period
+                        if delta == "miesiąc":
+                            transaction_date += relativedelta(months=1)
+                        elif delta == "tydzień":
+                            transaction_date += relativedelta(weeks=1)
+                        elif delta == "dzień":
+                            transaction_date += relativedelta(days=1)
+                        if transaction_date > datetime.now(transaction_date.tzinfo):
+                            Transaction(account_id=account_id,
+                                        amount=transaction.amount,
+                                        category_id=transaction.category_id,
+                                        transaction_type=transaction.transaction_type,
+                                        other_account_id=transaction.other_account_id,
+                                        transaction_status="forthcoming",
+                                        person=transaction.person,
+                                        recipient=transaction.recipient,
+                                        transaction_date=transaction_date,
+                                        cyclic_period=transaction.cyclic_period
+                                        ).save()
+                            break
+                        else:
+                            Transaction(account_id=account_id,
+                                        amount=transaction.amount,
+                                        category_id=transaction.category_id,
+                                        transaction_type=transaction.transaction_type,
+                                        other_account_id=transaction.other_account_id,
+                                        transaction_status="executed",
+                                        person=transaction.person,
+                                        recipient=transaction.recipient,
+                                        transaction_date=transaction_date,
+                                        cyclic_period=transaction.cyclic_period
+                                        ).save()
+                            update_balance_on_insert(account_id, transaction.transaction_type, transaction.amount,
+                                                     transaction.other_account_id, transaction_date)
