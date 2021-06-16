@@ -8,7 +8,7 @@ import Select from './Select';
 import '../styles/FormTransactions.css';
 import api from '../utils/api';
 import { AppContext } from '../store/AppContext';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 const dataTransaction = {
 	date: {
 		name: 'date',
@@ -52,12 +52,13 @@ const FormTransactions = ({
 }) => {
 	let history = useHistory();
 	const { currentAccount, getCsrfToken, setCurrentAccount } =
-	useContext(AppContext);
+		useContext(AppContext);
 
 	const [date, setDate] = useState(p_date);
 	const [selectCategory, setSelectCategory] = useState(p_selectCategory);
 	const [transactionType, setTransactionType] = useState(3); // transfer is mapped to an int of value 3 on backend
-	const [selectTargetAccount, setSelectTargetAccount] = useState(p_targetAccount);
+	const [selectTargetAccount, setSelectTargetAccount] =
+		useState(p_targetAccount);
 	const [description, setDescription] = useState(p_description);
 	const [amount, setAmount] = useState(p_amount);
 	const [id, setId] = useState(p_id);
@@ -177,17 +178,17 @@ const FormTransactions = ({
 				},
 			})
 				.then(response => {
-					console.log("dsadasda cos")
+					console.log('dsadasda cos');
 					if (response.status === 200) {
 						setCurrentAccount(response.data);
-						if(url.includes("update")){
-							history.push("/history");
-						}else{
+						if (url.includes('update')) {
+							history.push('/history');
+						} else {
 							setModalData({
-								header:"Przelew zatwierdzony",
-								content:`Nazwa dodanego przelewu to ${description}`,
-								classes:"positive-info"
-							})
+								header: 'Przelew zatwierdzony',
+								content: `Nazwa dodanego przelewu to ${description}`,
+								classes: 'positive-info',
+							});
 							setIsOpenModal(true);
 						}
 					}
@@ -287,7 +288,9 @@ const FormTransactions = ({
 						)}
 					</div>
 					<div className="save-transaction">
-						<button>Zapisz</button>
+						<button disabled={currentAccount ? false : true}>
+							Zapisz
+						</button>
 					</div>
 				</div>
 			</form>

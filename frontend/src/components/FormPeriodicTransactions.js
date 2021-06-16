@@ -186,10 +186,10 @@ const FormTransactions = ({
 					if (response.status === 200) {
 						setCurrentAccount(response.data);
 						setModalData({
-							header:"Transakcja cykliczna",
-							content:`Dodano nową transakcje cykliczną`,
-							classes:"positive-info"
-						})
+							header: 'Transakcja cykliczna',
+							content: `Dodano nową transakcje cykliczną`,
+							classes: 'positive-info',
+						});
 						setIsOpenModal(true);
 					}
 				})
@@ -301,7 +301,9 @@ const FormTransactions = ({
 						)}
 					</div>
 					<div className="save-transaction">
-						<button>Zapisz</button>
+						<button disabled={currentAccount ? false : true}>
+							Zapisz
+						</button>
 					</div>
 				</div>
 			</form>
