@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import api from '../utils/api';
 import TransactionsList from '../components/TransactionsList';
 import { AppContext } from '../store/AppContext';
-import '../styles/history.css'
+import '../styles/history.css';
 
 const History = () => {
 	const [transactions, setTransactions] = useState([]);
@@ -53,7 +53,6 @@ const History = () => {
 				csrfToken={getCsrfToken()}
 				allTransactions={transactions}
 				setTransactions={setTransactions}
-
 			/>
 			{/* <TransactionsList transactions={actualTransactions} loading={loading}/>
         <Paginate amountOnPage={amountOnPage} totalAmount={transactions.length}/> */}

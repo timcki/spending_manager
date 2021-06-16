@@ -3,24 +3,25 @@ import '../../styles/panel_amount/accountCard.css';
 import { Check, Trash } from 'react-bootstrap-icons';
 import { AppContext } from '../../store/AppContext';
 
-const AccountCard = ({ name, id, balance, clicked, isDefault,deleteFunc}) => {
-	const { currentAccount} =useContext(AppContext);
-	let iconClassnames = ['icons', 'check-icon'];
+const AccountCard = ({ name, id, balance, clicked, isDefault }) => {
+	let iconClassNames = ['icons', 'check-icon'];
+	let cardClassNames = ['account-card'];
 	if (isDefault === true) {
-		iconClassnames.push('default');
+		iconClassNames.push('default');
+		cardClassNames.push('default');
 	}
 	return (
 		<div key={id} className="account-card-wrapper">
-			<div className="account-card">
+			<div className={cardClassNames.join(' ')}>
 				<div className="account-name">
-					{' '}
-					{name}: {balance}PLN{' '}
+					<div className="account-name-value">{name}</div>
+					<div className="account-name-balance">{balance}PLN </div>
 				</div>
 				<div>
 					{
 						<Check
 							onClick={clicked}
-							className={iconClassnames.join(' ')}
+							className={iconClassNames.join(' ')}
 						/>
 					}
 				</div>
