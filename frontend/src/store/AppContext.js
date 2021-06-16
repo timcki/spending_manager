@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 export const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState(localStorage.getItem('user')?localStorage.getItem('user'):null);
 	// const [token, setToken]=useState();
 	const [cookies, setCookie, removeCookie] = useCookies();
 	const [currentAccount, setCurrentAccount] = useState(null);
@@ -23,8 +23,10 @@ const AppProvider = ({ children }) => {
 	});
 
 	const isLogin = () => {
+		const user = localStorage.getItem('user');
 		return (
-			cookies.token && cookies.token !== '' && cookies.token !== undefined
+			// cookies.token && cookies.token !== '' && cookies.token !== undefined
+			user && user !== '' && user !== undefined
 		);
 	};
 	const getToken = () => {
@@ -114,9 +116,9 @@ const AppProvider = ({ children }) => {
 	const takeFromLocalStorage = () => {
 		// const token = localStorage.getItem("token");
 		const user = localStorage.getItem('user');
-		if (isLogin()) {
-			setUser(user);
-		}
+		// if (isLogin()) {
+		// 	setUser(user);
+		// }
 	};
 
 	const value = {

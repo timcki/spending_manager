@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import InputNormal from '../components/InputNormal';
 import '../styles/inputCalculator.css';
+import Big from 'big.js';
 
 const dataCalc ={
     inputAmount:{
@@ -56,22 +57,35 @@ const InputWithCalculator = (props) => {
             setErrorInputHelp(false);
         }
         const b = parseFloat(operationAmount);
+
+        let bigA = new Big(a);
+        let bigB = new Big(b);
+
+        let result=null;
         switch(operation){
             case "add":
-                setAmount(a+b);
+                result = bigA.plus(bigB).toFixed(2)
+                setAmount(result);
+                // setAmount(a+b);
                 setOperationAmount(0);
                 break;
             case "sub":
-                setAmount(a-b);
+                result = bigA.minus(bigB).toFixed(2);
+                setAmount(result);
+                // setAmount(a-b);
                 setOperationAmount(0);
                 break;
             case "mult":
-                setAmount(a*b);
+                result = bigA.times(bigB).toFixed(2)
+                setAmount(result);
+                // setAmount(a*b);
                 setOperationAmount(0);
                 break;
             case "div":
                 if(b!==0){
-                    setAmount(a/b);
+                    result = bigA.div(bigB).toFixed(2)
+                    setAmount(result);
+                    // setAmount(a/b);
                     setOperationAmount(0);
                     if(errorDivideByZero){
                         setErrorDivideByZero(false);

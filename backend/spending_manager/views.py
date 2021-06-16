@@ -72,7 +72,7 @@ def api_transactions_get():
     username = get_jwt_identity()
     user = User.objects(username=username).first()
 
-    tx = Transaction.objects(account_id=user.main_account_id)
+    tx = Transaction.objects(account_id=user.main_account_id).order_by('-transaction_date')
     return jsonify(tx), 200
 
 
@@ -293,4 +293,50 @@ def api_accounts_delete():
         return jsonify({"success": True, "mssg": "Poprawnie usunieto konto"}), 200
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
+@app.route('/api/v1/stats/get', methods=['GET'])
+@jwt_required()
+def api_stats_get():
+    username = get_jwt_identity()
+    user = User.objects(username=username).first()
+
+    max_expense = Transaction.objects(account_id=user.main_account_id,transaction_type=1).order_by('-amount').first()
+    max_income = Transaction.objects(account_id=user.main_account_id,transaction_type=2).order_by('amount').first()
+
+    today=datetime.now()
+    start = datetime(today.year,today.month, 1)
+    number = Transaction.objects(account_id=user.main_account_id,transaction_date__gte=start).count()
+
+    expense = Transaction.objects(account_id=user.main_account_id,transaction_date__gte=start,transaction_type=1)
+    income=Transaction.objects(account_id=user.main_account_id,transaction_date__gte=start,transaction_type=2)
+    transfer=Transaction.objects(account_id=user.main_account_id,transaction_date__gte=start,transaction_type=3)
+    
+    expense_number = len(expense)
+    income_number=len(income)
+    transfer_number=len(transfer)
+
+    expense_value=0
+    for el in expense:
+        expense_value+=el.amount
+
+    income_value=0
+    for el in income:
+        income_value+=el.amount
+
+    transfer_value=0
+    for el in transfer:
+        transfer_value+=el.amount
+
+    return jsonify(
+        {
+            "max_expense": max_expense,
+            "max_income":max_income,
+            "number":number,
+            "expense_number":expense_number,
+            "income_number":income_number,
+            "transfer_number":transfer_number,
+            "start":start,
+            "expense_value":expense_value,
+            "income_value":income_value,
+            "transfer_value":transfer_value
+        }), 200
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import api from '../utils/api';
 import TransactionsList from '../components/TransactionsList';
 import { AppContext } from '../store/AppContext';
+import '../styles/history.css'
 
 const History = () => {
 	const [transactions, setTransactions] = useState([]);
@@ -41,7 +42,7 @@ const History = () => {
 
 	return (
 		<>
-			<div>History</div>
+			<h1 className="history-header">Historia transakcji dla konta: <strong>{currentAccount.name}</strong></h1>
 			<TransactionsList
 				data={actualTransactions}
 				loading={loading}
@@ -50,6 +51,9 @@ const History = () => {
 				onclick={handleClickChangePage}
 				page={page}
 				csrfToken={getCsrfToken()}
+				allTransactions={transactions}
+				setTransactions={setTransactions}
+
 			/>
 			{/* <TransactionsList transactions={actualTransactions} loading={loading}/>
         <Paginate amountOnPage={amountOnPage} totalAmount={transactions.length}/> */}

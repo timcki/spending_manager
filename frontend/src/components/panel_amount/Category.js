@@ -3,7 +3,10 @@ import api from '../../utils/api';
 import { AppContext } from '../../store/AppContext';
 import CategoryList from './CategoryList';
 
-const Category = () => {
+const Category = ({	
+	setModalData,
+	setIsOpenModal
+	}) => {
 	const [category, setCategory] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
@@ -39,6 +42,8 @@ const Category = () => {
 	return (
 		<>
 			<CategoryList
+				setModalData={setModalData}
+				setIsOpenModal={setIsOpenModal}
 				data={actualCategory}
 				loading={loading}
 				amountOnPage={amountOnPage}
