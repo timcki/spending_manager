@@ -7,8 +7,7 @@ const panels = [
 	{ name: 'transakcje', path: '/transactions' },
 	{ name: 'twoje konta', path: '/accounts' },
 	{ name: 'statystyki', path: '/statistics' },
-	{ name: 'historia', path: '/history' },
-	{ name: 'ustawienia', path: '/settings' },
+	{ name: 'historia', path: '/history' }
 ];
 
 const Navigation = () => {

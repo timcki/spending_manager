@@ -42,7 +42,7 @@ const History = () => {
 
 	return (
 		<>
-			<h1 className="history-header">Historia transakcji dla konta: <strong>{currentAccount.name}</strong></h1>
+			<h1 className="history-header">Historia transakcji</h1>
 			<TransactionsList
 				data={actualTransactions}
 				loading={loading}

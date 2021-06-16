@@ -371,14 +371,15 @@ def api_accounts_update():
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 
-@app.route('/api/v1/accounts/delete', methods=['DELETE'])
+@app.route('/api/v1/accounts/delete', methods=['POST', 'DELETE'])
 @jwt_required()
 def api_accounts_delete():
     if request.is_json:
         account_id = request.json.get("account_id", None)
         account = Account.objects(id=account_id).first()
-        account.delete()
-        return jsonify({"success": True, "mssg": "Poprawnie usunieto konto"}), 200
+        if Account is not None:
+            account.delete()
+            return jsonify({"success": True, "mssg": "Poprawnie usunieto konto"}), 200
     return jsonify({"success": False, "mssg": "Brak danych"}), 400
 
 @app.route('/api/v1/stats/get', methods=['GET'])

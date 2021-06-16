@@ -21,7 +21,8 @@ const Transactions = ({ ...props}) => {
 				<Switch>
 					<Route
 						path="/transactions/periodic"
-						component={FormPeriodicTransactions}
+						// component={FormPeriodicTransactions}
+						component={()=><FormPeriodicTransactions setIsOpenModal={setIsOpenModal} setModalData={setModalData}/>}
 					/>
 					<Route
 						path="/transactions/transfer"
