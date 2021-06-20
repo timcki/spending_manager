@@ -1,12 +1,14 @@
 # Spending Manager
-A spending manager created as an assignment in a university project.
+Spending manager created as an assignment for a university project.
 
 ## Running
-
-**I HIGHLY RECOMMEND USING A VIRTUALENV**
-To launch the app, run this in the cli:
 ```bash
-pip install flask && flask run
+docker-compose up --build
 ```
+and then open `localhost:3000` in your browser
 
-# Prosze tworzyc branche i PR bo sie pozabijamy
+## Developing
+```bash
+docker-compose up --build
+```
+files for flask and react are attached as volumes on running containers which means live reload should work properly.
